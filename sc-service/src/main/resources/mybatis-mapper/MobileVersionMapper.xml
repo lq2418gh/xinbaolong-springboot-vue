@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.mobile.dao.MobileVersionMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="MobileVersion_columns">
+	    <![CDATA[
+			id as id,
+			version as version,
+			file_name as file_name,
+			user_id as user_id,
+			user_name as user_name,
+		
+			upload_time as upload_time,
+			download_count as download_count,
+			status as status,
+			phone_type as phone_type,
+			file_type as file_type
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.mobile.pojo.MobileVersion" id="mobileVersionMap">
+		<id column="id" property="id"/>
+	    <result column="version" property="version"/>
+	    <result column="file_name" property="fileName"/>
+	    <result column="user_id" property="userId"/>
+	    <result column="user_name" property="userName"/>
+	    <result column="upload_time" property="uploadTime"/>
+	    <result column="download_count" property="downloadCount"/>
+	    <result column="status" property="status"/>
+	    <result column="phone_type" property="phoneType"/>
+	    <result column="file_type" property="fileType"/>
+		<result column="module_type" property="moduleType"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="mobileVersionMap" parameterType="com.bit.sc.module.mobile.vo.MobileVersionVO">
+		select <include refid="MobileVersion_columns" /> from t_mobile_version
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=VARCHAR}</if>
+			<if test="version != null and version != '' " >and version =#{version,jdbcType=VARCHAR}</if>
+			<if test="fileName != null and fileName != '' " >and file_name =#{fileName,jdbcType=VARCHAR}</if>
+			<if test="userId != null and userId != '' " >and user_id =#{userId,jdbcType=BIGINT}</if>
+			<if test="userName != null and userName != '' " >and user_name =#{userName,jdbcType=VARCHAR}</if>
+			<if test="downloadCount != null and downloadCount != '' " >and download_count =#{downloadCount,jdbcType=BIGINT}</if>
+			<if test="status != null and status != '' " >and status =#{status,jdbcType=INTEGER}</if>
+			<if test="phoneType != null and phoneType != '' " >and phone_type =#{phoneType,jdbcType=INTEGER}</if>
+			<if test="fileType != null and fileType != '' " >and file_type =#{fileType,jdbcType=INTEGER}</if>
+			<if test="moduleType != null and moduleType != '' " >and module_type =#{moduleType,jdbcType=INTEGER}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="mobileVersionMap" parameterType="String">
+		select <include refid="MobileVersion_columns" /> from t_mobile_version
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="mobileVersionMap" parameterType="com.bit.sc.module.mobile.pojo.MobileVersion">
+		select <include refid="MobileVersion_columns" /> 
+		from t_mobile_version
+		where 
+        	id =#{id,jdbcType=VARCHAR}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.mobile.pojo.MobileVersion">
+	insert INTO t_mobile_version (
+		version ,
+		file_name ,
+		user_id ,
+		user_name ,
+		upload_time ,
+		download_count ,
+		status ,
+		phone_type ,
+		file_type,
+		module_type
+	) VALUES (
+		#{version,jdbcType=VARCHAR},
+		#{fileName,jdbcType=VARCHAR},
+		#{userId,jdbcType=BIGINT},
+		#{userName,jdbcType=VARCHAR},
+		#{uploadTime,jdbcType=DATE},
+		#{downloadCount,jdbcType=BIGINT},
+		#{status,jdbcType=INTEGER},
+		#{phoneType,jdbcType=INTEGER},
+		#{fileType,jdbcType=INTEGER},
+		#{moduleType,jdbcType=INTEGER}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.mobile.pojo.MobileVersion">
+		update t_mobile_version
+		<set>
+		<if test="version != null">
+		 version =#{version,jdbcType=VARCHAR},
+		</if>
+		<if test="fileName != null">
+		 file_name =#{fileName,jdbcType=VARCHAR},
+		</if>
+		<if test="userId != null">
+		 user_id =#{userId,jdbcType=BIGINT},
+		</if>
+		<if test="userName != null">
+		 user_name =#{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="uploadTime != null">
+		 upload_time =#{uploadTime,jdbcType=DATE},
+		</if>
+		<if test="downloadCount != null">
+		 download_count =#{downloadCount,jdbcType=BIGINT},
+		</if>
+		<if test="status != null">
+		 status =#{status,jdbcType=INTEGER},
+		</if>
+		<if test="phoneType != null">
+		 phone_type =#{phoneType,jdbcType=INTEGER},
+		</if>
+		<if test="fileType != null">
+		 file_type =#{fileType,jdbcType=INTEGER}
+		</if>
+		<if test="fileType != null">
+            module_type =#{moduleType,jdbcType=INTEGER}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=VARCHAR}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.mobile.pojo.MobileVersion">
+		delete from t_mobile_version 
+		where
+			id = #{id,jdbcType=VARCHAR}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_mobile_version
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+</mapper>

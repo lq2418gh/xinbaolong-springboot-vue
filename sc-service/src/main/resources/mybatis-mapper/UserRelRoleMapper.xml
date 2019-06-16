@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.UserRelRoleMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="UserRelRole_columns">
+	    <![CDATA[
+			id as id,
+			user_id as user_id,
+			role_id as role_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.UserRelRole" id="userRelRoleMap">
+		<id column="id" property="id"/>
+	    <result column="user_id" property="userId"/>
+	    <result column="role_id" property="roleId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="userRelRoleMap" parameterType="com.bit.sc.module.sys.vo.UserRelRoleVO">
+		select <include refid="UserRelRole_columns" /> from t_sys_user_rel_role
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="userId != null " >and user_id =#{userId,jdbcType=BIGINT}</if>
+			<if test="roleId != null " >and role_id =#{roleId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="userRelRoleMap" parameterType="String">
+		select <include refid="UserRelRole_columns" /> from t_sys_user_rel_role
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="userRelRoleMap" parameterType="com.bit.sc.module.sys.pojo.UserRelRole">
+		select <include refid="UserRelRole_columns" /> 
+		from t_sys_user_rel_role
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.UserRelRole">
+	insert INTO t_sys_user_rel_role (
+		user_id ,
+		role_id 
+	) VALUES (
+		#{userId,jdbcType=BIGINT},
+		#{roleId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.UserRelRole">
+		update t_sys_user_rel_role
+		<set>
+		<if test="user_id != null">
+		 user_id =#{userId,jdbcType=BIGINT},
+		</if>
+		<if test="role_id != null">
+		 role_id =#{roleId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.UserRelRole">
+		delete from t_sys_user_rel_role 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from  t_sys_user_rel_role
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+     <!--根据条件查询role-->
+	<select id="findRoleByCondition" resultMap="userRelRoleMap" >
+		select <include refid="UserRelRole_columns" /> from t_sys_user_rel_role
+		     WHERE  1=1
+		        <if test="userId!=null and userId!=''">
+					AND  user_id=#{userId}
+				</if>
+	</select>
+
+	<insert id="batchAdd" parameterType="list">
+		insert into t_sys_user_rel_role(user_id,role_id)
+		values
+		<foreach collection="userRelRoles" item="item" index="index" separator=",">
+			(
+			#{item.userId},
+			#{item.roleId}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="deleteRole" parameterType="long">
+		delete from t_sys_user_rel_role where user_id =#{id}
+	</delete>
+
+
+</mapper>

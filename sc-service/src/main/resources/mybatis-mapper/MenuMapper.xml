@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.MenuMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Menu_columns">
+	    <![CDATA[
+			id as id,
+			application_id as application_id,
+			menu_name as menu_name,
+			menu_icon as menu_icon,
+			menu_level as menu_level,
+		
+			menu_url as menu_url,
+			menu_code as menu_code,
+			order_value as order_value,
+			is_display as is_display,
+			create_time as create_time,
+		
+			create_user_id as create_user_id,
+			update_time as update_time,
+			update_user_id as update_user_id,
+			update_user_name as update_user_name,
+			create_user_name as create_user_name,
+			application_name as application_name,
+			type as type,
+			pid as pid
+	    ]]>
+	</sql>
+
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Menu_User_Apply_columns">
+	    <![CDATA[
+			sm.id as id,
+			sm.application_id as application_id,
+			sm.menu_name as menu_name,
+			sm.menu_icon as menu_icon,
+			sm.menu_level as menu_level,
+
+
+			sm.menu_url as menu_url,
+			sm.menu_code as menu_code,
+			sm.order_value as order_value,
+			sm.is_display as is_display,
+			sm.create_time as create_time,
+
+			sm.create_user_id as create_user_id,
+			sm.update_time as update_time,
+			sm.update_user_id as update_user_id,
+			u2.real_name as update_user_name,
+			u.real_name as create_user_name,
+			sa.application_name as application_name,
+			sm.type as type,
+			sm.pid as pid
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.Menu" id="menuMap">
+		<id column="id" property="id"/>
+	    <result column="application_id" property="applicationId"/>
+	    <result column="menu_name" property="menuName"/>
+	    <result column="menu_icon" property="menuIcon"/>
+	    <result column="menu_level" property="menuLevel"/>
+	    <result column="menu_url" property="menuUrl"/>
+	    <result column="menu_code" property="menuCode"/>
+	    <result column="order_value" property="orderValue"/>
+	    <result column="is_display" property="isDisplay"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+	    <result column="update_user_name" property="updateUserName"/>
+	    <result column="create_user_name" property="createUserName"/>
+	    <result column="application_name" property="applicationName"/>
+	    <result column="type" property="type"/>
+	    <result column="pid" property="pid"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="menuMap" parameterType="com.bit.sc.module.sys.vo.MenuVO">
+		select <include refid="Menu_User_Apply_columns" />
+		from
+		t_sys_menu sm
+		LEFT JOIN t_sys_apply sa ON sa.id=sm.application_id
+		LEFT JOIN t_sys_manage_user u ON sm.create_user_id = u.id
+		LEFT JOIN t_sys_manage_user u2 ON sm.update_user_id = u2.id
+		<where>
+			sa.is_delete=0
+			<if test="id != null ">and sm.id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationId != null ">and sm.application_id =#{applicationId,jdbcType=BIGINT}</if>
+			<if test="menuName != null ">and sm.menu_name like "%"#{menuName,jdbcType=VARCHAR}"%"</if>
+			<if test="menuIcon != null ">and sm.menu_icon =#{menuIcon,jdbcType=VARCHAR}</if>
+			<if test="menuLevel != null ">and sm.menu_level =#{menuLevel,jdbcType=INTEGER}</if>
+			<if test="menuUrl != null ">and sm.menu_url =#{menuUrl,jdbcType=VARCHAR}</if>
+			<if test="menuCode != null ">and sm.menu_code =#{menuCode,jdbcType=VARCHAR}</if>
+			<if test="orderValue != null ">and sm.order_value =#{orderValue,jdbcType=INTEGER}</if>
+			<if test="isDisplay != null ">and sm.is_display =#{isDisplay,jdbcType=TINYINT}</if>
+			<if test="createUserId != null ">and sm.create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null ">and sm.update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+			<if test="type != null ">and sm.type =#{type,jdbcType=TINYINT}</if>
+			<if test="pid != null ">and sm.pid =#{pid,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="menuMap" parameterType="String">
+		select <include refid="Menu_columns" /> from t_sys_menu
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="menuMap" parameterType="com.bit.sc.module.sys.pojo.Menu">
+		select <include refid="Menu_columns" /> 
+		from t_sys_menu
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+    <!--  根据条件查询 -->
+	<select id="findMenuByCondition"  resultType="com.bit.sc.module.sys.pojo.Menu" >
+		SELECT
+			t.*
+		    FROM
+			(
+				SELECT
+					DISTINCT(function_id)
+				FROM
+					t_sys_role_rel_permission
+				WHERE
+					1 = 1
+		             AND role_id in
+				<foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+					#{roleId}
+				</foreach>
+		        <!--<if test="roleId!=null and roleId !=''">
+					AND  role_id=#{roleId}
+				</if>-->
+				    AND permission_type = 1
+			) srl
+		LEFT JOIN (
+			SELECT
+				t.*,ta.application_name,u.real_name  create_user_name,u2.real_name  update_user_name
+			FROM
+				t_sys_menu t
+				LEFT JOIN  t_sys_apply ta  ON ta.id=t.application_id
+				LEFT JOIN t_sys_manage_user u ON t.create_user_id = u.id
+				LEFT JOIN t_sys_manage_user u2 ON t.update_user_id = u2.id
+			WHERE
+				1 = 1
+		        AND ta.is_delete=0
+				<if test="type !=null">
+					AND t.type=#{type}
+				</if>
+				<if test="applicationCode != null and applicationCode !=''  ">
+					AND ta.application_code =#{applicationCode}
+				</if>
+		) t ON t.id = srl.function_id
+		<where>
+			<if test="isDisplay != null ">
+				AND t.is_display =#{isDisplay}
+			</if>
+		</where>
+		order by t.order_value
+	</select>
+	<!-- 查询统计数 通过menuCode -->
+    <select id="findCountByMenuCode" resultType="java.lang.Integer" parameterType="String">
+		select count(1) from  t_sys_menu
+		<where>
+			1=1
+			<if test="_parameter != null and _parameter !=''  ">
+				and menu_code =#{_parameter}
+			</if>
+		</where>
+	</select>
+	<!-- 根据application 查询menu 所有 -->
+	<select id="findByApplicationCode" resultType="com.bit.sc.module.sys.pojo.Menu">
+		select t.*  from t_sys_menu t LEFT JOIN  t_sys_apply ta  ON ta.id=t.application_id
+		<where>
+			t.is_display=1
+			<if test="_parameter != null and _parameter !=''  ">
+				 and ta.application_code =#{_parameter}
+			</if>
+		</where>
+	</select>
+	<select id="findAllByParam" resultType="com.bit.sc.module.sys.pojo.Menu">
+		select * from t_sys_menu t LEFT JOIN  t_sys_apply ta ON ta.id=t.application_id where ta.application_code=#{applicationName} and t.is_display=#{isDisplay}
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.Menu">
+	insert INTO t_sys_menu (
+		application_id ,
+		menu_name ,
+		menu_icon ,
+		menu_level ,
+		menu_url ,
+		menu_code ,
+		order_value ,
+		is_display ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		update_user_id ,
+		type,
+		pid 
+	) VALUES (
+		#{applicationId,jdbcType=BIGINT},
+		#{menuName,jdbcType=VARCHAR},
+		#{menuIcon,jdbcType=VARCHAR},
+		#{menuLevel,jdbcType=INTEGER},
+		#{menuUrl,jdbcType=VARCHAR},
+		#{menuCode,jdbcType=VARCHAR},
+		#{orderValue,jdbcType=INTEGER},
+		#{isDisplay,jdbcType=TINYINT},
+		#{createTime,jdbcType=DATE},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=DATE},
+		#{updateUserId,jdbcType=BIGINT},
+		#{type,jdbcType=INTEGER},
+		#{pid,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.Menu">
+		update t_sys_menu
+		<set>
+		<if test="applicationId != null ">
+			application_id =#{applicationId,jdbcType=BIGINT},
+		</if>
+		<if test="menuName != null and menuName !=''">
+		 menu_name =#{menuName,jdbcType=VARCHAR},
+		</if>
+		<if test="menuIcon != null and menuIcon != ''">
+		 menu_icon =#{menuIcon,jdbcType=VARCHAR},
+		</if>
+		<if test="menuLevel != null">
+		 menu_level =#{menuLevel,jdbcType=INTEGER},
+		</if>
+		<if test="menuUrl != null and menuUrl !='' ">
+		 menu_url =#{menuUrl,jdbcType=VARCHAR},
+		</if>
+		<if test="menuCode != null and menuCode !=''">
+		 menu_code =#{menuCode,jdbcType=VARCHAR},
+		</if>
+		<if test="orderValue != null">
+		 order_value =#{orderValue,jdbcType=INTEGER},
+		</if>
+		<if test="isDisplay != null">
+		 is_display =#{isDisplay,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=DATE},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=DATE},
+		</if>
+		<if test="updateUserId != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT},
+		</if>
+		<if test="type != null">
+			type =#{type,jdbcType=TINYINT},
+		</if>
+		<if test="pid != null">
+		 pid =#{pid,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.Menu">
+		delete from t_sys_menu 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_sys_menu where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

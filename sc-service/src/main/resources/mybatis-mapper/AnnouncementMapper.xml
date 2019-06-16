@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.news.dao.AnnouncementMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Announcement_columns">
+	    <![CDATA[
+			id as id,
+			title as title,
+			content as content,
+			image_url as image_url,
+		
+			is_publish as is_publish,
+			is_delete as is_delete,
+			create_time as create_time,
+			create_user_id as create_user_id,
+			create_user_name as create_user_name,
+		
+			update_time as update_time,
+			update_user_id as update_user_id,
+			update_user_name as update_user_name,
+			order_value as order_value,
+			amount as amount,
+			is_banner as is_banner
+	    ]]>
+	</sql>
+
+    <sql id="Announcement_join_columns">
+        <![CDATA[
+		t2.id AS id,
+        t2.title AS title,
+        t2.content AS content,
+        t2.image_url AS image_url,
+        t2.is_publish AS is_publish,
+        t2.is_delete AS is_delete,
+        t2.create_time AS create_time,
+        t2.create_user_id AS create_user_id,
+        t2.create_user_name AS create_user_name,
+        t2.update_time AS update_time,
+        t2.update_user_id AS update_user_id,
+        t2.update_user_name AS update_user_name,
+        t2.order_value AS order_value,
+        t2.amount AS amount,
+        t2.is_banner AS is_banner
+
+        ]]>
+    </sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.news.pojo.Announcement" id="announcementMap">
+		<id column="id" property="id"/>
+	    <result column="title" property="title"/>
+	    <result column="content" property="content"/>
+	    <result column="image_url" property="imageUrl"/>
+	    <result column="is_publish" property="isPublish"/>
+	    <result column="is_delete" property="isDelete"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="create_user_name" property="createUserName"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+	    <result column="update_user_name" property="updateUserName"/>
+	    <result column="order_value" property="orderValue"/>
+	    <result column="amount" property="amount"/>
+		<result column="is_banner" property="isBanner"/>
+	</resultMap>
+
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.news.vo.AnnouncementVO" id="announcementVOMap">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="image_url" property="imageUrl"/>
+		<result column="is_publish" property="isPublish"/>
+		<result column="is_delete" property="isDelete"/>
+		<result column="create_time" property="createTime"/>
+		<result column="create_user_id" property="createUserId"/>
+		<result column="create_user_name" property="createUserName"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="update_user_id" property="updateUserId"/>
+		<result column="update_user_name" property="updateUserName"/>
+		<result column="order_value" property="orderValue"/>
+		<result column="amount" property="amount"/>
+		<result column="is_banner" property="isBanner"/>
+	</resultMap>
+
+	<!-- 翻页查询 -->
+
+    <select id="findByConditionPage" resultMap="announcementMap" parameterType="com.bit.sc.module.news.vo.AnnouncementVO">
+        select <include refid="Announcement_join_columns" />
+        from t_sys_address_rel_announcement t1
+        INNER JOIN t_sys_announcement t2
+        ON t1.announcement_id = t2.id
+        <where>
+            <if test="id != null and id != '' " >and t2.id =#{id,jdbcType=BIGINT}</if>
+            <if test="title != null and title != '' " >and t2.title =#{title,jdbcType=VARCHAR}</if>
+            <if test="content != null and content != '' " >and t2.content =#{content,jdbcType=LONGVARCHAR}</if>
+            <if test="imageUrl != null and imageUrl != '' " >and t2.image_url =#{imageUrl,jdbcType=VARCHAR}</if>
+            <if test="isPublish != null " >and t2.is_publish =#{isPublish,jdbcType=TINYINT}</if>
+            <if test="isDelete != null  " >and t2.is_delete =#{isDelete,jdbcType=TINYINT}</if>
+            <if test="createUserId != null  " >and t2.create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+            <if test="createUserName != null and createUserName != '' " >and t2.create_user_name =#{createUserName,jdbcType=VARCHAR}</if>
+            <if test="updateUserId != null  " >and t2.update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+            <if test="updateUserName != null and updateUserName != '' " >and t2.update_user_name =#{updateUserName,jdbcType=VARCHAR}</if>
+            <if test="orderValue != null  " >and t2.order_value =#{orderValue,jdbcType=INTEGER}</if>
+            <if test="amount != null  " >and t2.amount =#{amount,jdbcType=INTEGER}</if>
+            <if test="isBanner != null " >and t2.is_banner =#{isBanner,jdbcType=INTEGER}</if>
+			<if test="addressId != null " >and t1.address_id = #{addressId,jdbcType=TINYINT} </if>
+        </where>
+        <if test="order!=null and order!=''">
+            ORDER BY t2.${order} desc
+        </if>
+
+    </select>
+	<!-- 查询全部 -->
+
+    <select id="findAll" resultMap="announcementMap" parameterType="com.bit.sc.module.news.vo.AnnouncementVO">
+        select <include refid="Announcement_join_columns"/>
+        from t_sys_address_rel_announcement t1
+        INNER JOIN t_sys_announcement t2
+        ON t1.announcement_id = t2.id
+        <where>
+            <if test="isPublish != null " >and t2.is_publish =#{isPublish,jdbcType=TINYINT}</if>
+            <if test="isDelete != null  " >and t2.is_delete =#{isDelete,jdbcType=TINYINT}</if>
+        </where>
+        <if test="order!=null and order!=''">
+            ORDER BY t2.${order} DESC
+        </if>
+    </select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="announcementMap" parameterType="long">
+		select <include refid="Announcement_columns" />
+		from t_sys_announcement
+		<where>
+
+			<if test="id!=null">
+				id =#{id,jdbcType=BIGINT}
+			</if>
+		</where>
+
+
+	</select>
+
+	<!-- 查询4条记录 -->
+	<select id="findFour" resultMap="announcementMap" parameterType="com.bit.sc.module.news.vo.AnnouncementVO">
+		select <include refid="Announcement_columns" />
+		from t_sys_announcement
+			<where>
+				<if test="isPublish != null " >and is_publish =#{isPublish,jdbcType=TINYINT}</if>
+				<if test="isDelete != null  " >and is_delete =#{isDelete,jdbcType=TINYINT}</if>
+			</where>
+		ORDER BY
+		create_time desc
+		LIMIT 0,4
+	</select>
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.news.pojo.Announcement" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+	insert INTO t_sys_announcement (
+		title ,
+		content ,
+		image_url ,
+		is_publish ,
+		is_delete ,
+		create_time ,
+		create_user_id ,
+		create_user_name ,
+		update_time ,
+		update_user_id ,
+		update_user_name ,
+		order_value ,
+		amount,
+		is_banner
+	) VALUES (
+		#{title,jdbcType=VARCHAR},
+		#{content,jdbcType=LONGVARCHAR},
+		#{imageUrl,jdbcType=VARCHAR},
+		#{isPublish,jdbcType=TINYINT},
+		#{isDelete,jdbcType=TINYINT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{createUserName,jdbcType=VARCHAR},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{updateUserId,jdbcType=BIGINT},
+		#{updateUserName,jdbcType=VARCHAR},
+		#{orderValue,jdbcType=INTEGER},
+		#{amount,jdbcType=INTEGER},
+		#{isBanner,jdbcType=INTEGER}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.news.pojo.Announcement">
+		update t_sys_announcement
+		<set>
+		<if test="title != null">
+		 title =#{title,jdbcType=VARCHAR},
+		</if>
+		<if test="content != null">
+		 content =#{content,jdbcType=LONGVARCHAR},
+		</if>
+		<if test="imageUrl != null">
+		 image_url =#{imageUrl,jdbcType=VARCHAR},
+		</if>
+
+		<if test="isPublish != null">
+		 is_publish =#{isPublish,jdbcType=TINYINT},
+		</if>
+		<if test="isDelete != null">
+		 is_delete =#{isDelete,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="createUserName != null">
+		 create_user_name =#{createUserName,jdbcType=VARCHAR},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="updateUserId != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT},
+		</if>
+		<if test="updateUserName != null">
+		 update_user_name =#{updateUserName,jdbcType=VARCHAR},
+		</if>
+		<if test="orderValue != null">
+		 order_value =#{orderValue,jdbcType=INTEGER},
+		</if>
+		<if test="amount != null">
+		 amount =#{amount,jdbcType=INTEGER},
+		</if>
+		<if test="isBanner != null">
+			is_banner = #{isBanner,jdbcType=INTEGER}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="int">
+		delete from t_sys_announcement
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="list">
+		<!--<foreach item="item" index="index" collection="ids" open="begin" close=";end;" separator =";">-->
+			delete from t_sys_announcement where
+			id in
+		<foreach collection="ids" item="id" index="index" open="("
+				 separator="," close=")">
+			#{id}
+		</foreach>
+
+		<!--</foreach>-->
+	</delete>
+
+
+
+	<select id="queryBanner" resultMap="announcementMap" parameterType="com.bit.sc.module.news.vo.AnnouncementVO">
+		select
+        <include refid="Announcement_join_columns"/>
+        from t_sys_address_rel_announcement t1
+		INNER JOIN t_sys_announcement t2
+		ON t1.announcement_id = t2.id
+		<where>
+			<if test="isPublish != null " >and t2.is_publish =#{isPublish,jdbcType=TINYINT}</if>
+			<if test="isDelete != null  " >and t2.is_delete =#{isDelete,jdbcType=TINYINT}</if>
+			<if test="isBanner != null " >and t2.is_banner = #{isBanner,jdbcType=TINYINT} </if>
+		</where>
+		<if test="order!=null and order!=''">
+			ORDER BY t2.${order} desc
+		</if>
+	</select>
+
+	<update id="deleteLogicById" parameterType="long">
+		UPDATE t_sys_announcement
+		set is_delete = 1
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+
+	<select id="queryListPage" resultMap="announcementMap" parameterType="com.bit.sc.module.news.vo.AnnouncementVO">
+		SELECT t1.*
+		FROM t_sys_announcement t1
+		INNER JOIN t_sys_address_rel_announcement t2
+		on t1.id = t2.announcement_id
+		<where>
+			<if test="addressId != null " >and t2.address_id = #{addressId,jdbcType=TINYINT} </if>
+			<if test="title != null and title != '' " >and t1.title like #{title,jdbcType=VARCHAR}</if>
+			<if test="isPublish != null " >and t1.is_publish =#{isPublish,jdbcType=TINYINT}</if>
+            <if test="isBanner != null " >and t1.is_banner = #{isBanner,jdbcType=TINYINT} </if>
+		</where>
+		<if test="order!=null and order!=''">
+			ORDER BY t1.${order} desc
+		</if>
+	</select>
+</mapper>

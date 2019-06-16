@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.PermissionRelMenuMapper">
+
+    <!-- 用于select查询公用抽取的列 -->
+    <!-- 字段与属性映射 -->
+    <!--<resultMap type="com.bit.sc.module.sys.pojo.PermissionRelMenu" id="permissionRelMenuMap">-->
+        <!--<result column="id" property="id"/>-->
+        <!--<result column="role_id" property="roleId"/>-->
+        <!--<result column="function_id" property="functionId"/>-->
+        <!--<result column="permission_type" property="permissionType"/>-->
+        <!--<result column="application_name" property="applicationName"/>-->
+        <!--<result column="menu_name" property="menuName"/>-->
+        <!--<result column="menu_icon" property="menuIcon"/>-->
+        <!--<result column="menu_level" property="menuLevel"/>-->
+        <!--<result column="menu_url" property="menuUrl"/>-->
+        <!--<result column="menu_code" property="menuCode"/>-->
+        <!--<result column="order_value" property="orderValue"/>-->
+        <!--<result column="is_display" property="isDisplay"/>-->
+        <!--<result column="create_time" property="createTime"/>-->
+        <!--<result column="create_userId" property="createUserId"/>-->
+        <!--<result column="update_time" property="updateTime"/>-->
+        <!--<result column="update_userId" property="updateUserId"/>-->
+        <!--<result column="pid" property="pid"/>-->
+    <!--</resultMap>-->
+
+    <!-- 查询所有记录 -->
+    <!--<select id="findAll" resultMap="permissionRelMenuMap" parameterType="com.bit.sc.module.sys.pojo.PermissionRelMenu">-->
+       <!--select rp.id as id,-->
+       <!--rp.role_id as role_id,-->
+       <!--rp.function_id as function_id,-->
+       <!--rp.permission_type as permission_type,-->
+       <!--m.menu_name as menu_name,-->
+       <!--m.menu_code as menu_code,-->
+       <!--m.order_value as order_value,-->
+       <!--m.is_display as is_display,-->
+       <!--m.create_user_id as create_user_id,-->
+       <!--m.create_time as create_time,-->
+       <!--m.update_user_id as update_user_id,-->
+       <!--m.update_time as update_time-->
+       <!--FROM t_sys_role_rel_permission rp-->
+       <!--LEFT JOIN t_sys_menu m ON m.id = rp.function_id-->
+    <!--</select>-->
+
+    <select id="findAll" resultType="com.bit.sc.module.sys.pojo.PermissionRelMenu" parameterType="com.bit.sc.module.sys.vo.PermissionRelMenuVO">
+       select rp.id as id,
+       a.application_name as application_name,
+       r.role_name as role_name,
+       m.menu_name as menu_name,
+       m.menu_code as menu_code,
+	   u.real_name as real_name
+       FROM t_sys_role_rel_permission rp
+       LEFT JOIN t_sys_menu m ON m.id = rp.function_id
+       LEFT JOIN t_sys_apply a ON a.id = rp.permission_type
+       LEFT JOIN t_sys_role r ON r.id = rp.role_id
+	   LEFT JOIN t_sys_manage_user u ON u.id = m.create_user_id
+    </select>
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.equipment.dao.EquipmentStatusMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="EquipmentStatus_columns">
+	    <![CDATA[
+			id as id,
+			equipment_id as equipment_id,
+			equipment_online_status as equipment_online_status,
+			update_time as update_time,
+			create_time as create_time,
+		
+			address_code as address_code
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.equipment.pojo.EquipmentStatus" id="equipmentStatusMap">
+		<id column="id" property="id"/>
+	    <result column="equipment_id" property="equipmentId"/>
+	    <result column="equipment_online_status" property="equipmentOnlineStatus"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="address_code" property="addressCode"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="equipmentStatusMap" parameterType="com.bit.sc.module.equipment.vo.EquipmentStatusVO">
+		select <include refid="EquipmentStatus_columns" /> from t_equipment_status
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="equipmentId != null and equipmentId != '' " >and equipment_id =#{equipmentId,jdbcType=VARCHAR}</if>
+			<if test="equipmentOnlineStatus != null and equipmentOnlineStatus != '' " >and equipment_online_status =#{equipmentOnlineStatus,jdbcType=TINYINT}</if>
+			<if test="addressCode != null and addressCode != '' " >and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="equipmentStatusMap" parameterType="String">
+		select <include refid="EquipmentStatus_columns" /> from t_equipment_status
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="equipmentStatusMap" parameterType="com.bit.sc.module.equipment.pojo.EquipmentStatus">
+		select <include refid="EquipmentStatus_columns" /> 
+		from t_equipment_status
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.equipment.pojo.EquipmentStatus">
+	insert INTO t_equipment_status (
+		equipment_id ,
+		equipment_online_status ,
+		update_time ,
+		create_time ,
+		address_code 
+	) VALUES (
+		#{equipmentId,jdbcType=VARCHAR},
+		#{equipmentOnlineStatus,jdbcType=TINYINT},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{addressCode,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.equipment.pojo.EquipmentStatus">
+		update t_equipment_status
+		<set>
+		<if test="equipmentId != null">
+		 equipment_id =#{equipmentId,jdbcType=VARCHAR},
+		</if>
+		<if test="equipmentOnlineStatus != null">
+		 equipment_online_status =#{equipmentOnlineStatus,jdbcType=TINYINT},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="addressCode != null">
+		 address_code =#{addressCode,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.equipment.pojo.EquipmentStatus">
+		delete from t_equipment_status 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_equipment_status
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+</mapper>

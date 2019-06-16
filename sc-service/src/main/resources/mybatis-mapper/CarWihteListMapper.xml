@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bit.sc.module.car.dao.CarWihteListMapper">
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="CarWihteList_columns">
+    <![CDATA[
+
+        id as id,
+        device_id as device_id,
+        car_id as car_id,
+        synchro_status as synchro_status,
+        synchro_time as synchro_time,
+        synchro_count as synchro_count
+
+        ]]>
+    </sql>
+
+    <!-- 字段与属性映射 -->
+    <resultMap id="carWihteListMap" type="com.bit.sc.module.car.pojo.CarWihteList">
+        <id column="id" property="id"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="car_id" property="carId"/>
+        <result column="synchro_status" property="synchroStatus"/>
+        <result column="synchro_time" property="synchroTime"/>
+        <result column="synchro_count" property="synchroCount"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="CarWihteListPage_columns">
+    <![CDATA[
+
+        cw.id as id,
+        cw.synchro_count as synchro_count,
+        cw.synchro_status as synchro_status,
+        cw.synchro_time as synchro_time,
+        cw.car_id as car_id,
+        cw.equipment_id as equipment_id,
+
+        c.car_number as car_number,
+        c.create_time as create_time,
+
+        e.address_code as address_code,
+        et.equipment_type as equipment_type,
+
+        a.address_name as address_name,
+        a.address_detail as address_detail,
+
+        r.real_name as real_name,
+
+        att.attachment_path as attachment_path
+
+        ]]>
+    </sql>
+
+    <!-- 字段与属性映射 -->
+    <resultMap id="carWihteListPageMap" type="com.bit.sc.module.car.pojo.CarWihteListPage">
+        <id column="id" property="id"/>
+        <result column="synchro_count" property="synchroCount"/>
+        <result column="synchro_status" property="synchroStatus"/>
+        <result column="synchro_time" property="synchroTime"/>
+        <result column="car_id" property="carId"/>
+        <result column="equipment_id" property="equipmentId"/>
+        <result column="device_id" property="deviceId"/>
+        <result column="car_number" property="carNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="address_code" property="addressCode"/>
+        <result column="equipment_type" property="equipmentType"/>
+        <result column="ar_name" property="arName"/>
+        <result column="address_name" property="addressName"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="real_name" property="realName"/>
+        <result column="attachment_path" property="attachmentPath"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="Equipment_columns">
+	    <![CDATA[
+			id as id,
+			equipment_id as equipment_id,
+			equipment_mac as equipment_mac,
+			equipment_type as equipment_type,
+
+			address_code as address_code,
+			create_time as create_time,
+			create_user_id as create_user_id,
+			equipment_status as equipment_status,
+			equipment_online_status as equipment_online_status,
+
+			remarks as remarks,
+			equipment_model_number as equipment_model_number,
+			equipment_model_number_id as equipment_model_number_id,
+			device_type as device_type,
+			secret_key as secret_key,
+			equipment_code as equipment_code
+	    ]]>
+	</sql>
+    <!-- 字段与属性映射 -->
+    <resultMap type="com.bit.sc.module.equipment.pojo.Equipment" id="equipmentMap">
+    <id column="id" property="id"/>
+    <result column="equipment_id" property="equipmentId"/>
+    <result column="equipment_mac" property="equipmentMac"/>
+    <result column="equipment_type" property="equipmentType"/>
+    <result column="address_code" property="addressCode"/>
+    <result column="create_time" property="createTime"/>
+    <result column="create_user_id" property="createUserId"/>
+    <result column="equipment_status" property="equipmentStatus"/>
+    <result column="equipment_online_status" property="equipmentOnlineStatus"/>
+    <result column="remarks" property="remarks"/>
+    <result column="equipment_model_number" property="equipmentModelNumber"/>
+    <result column="equipment_model_number_id" property="equipmentModelNumberId"/>
+    <result column="device_type" property="deviceType"/>
+    <result column="secret_key" property="secretKey"/>
+    <result column="equipment_code" property="equipmentCode"/>
+    </resultMap>
+
+    <!-- 分页查询 -->
+    <select id="findByConditionPage" resultMap="carWihteListPageMap" parameterType="com.bit.sc.module.car.vo.CarWihteListVO">
+        select
+        <include refid="CarWihteListPage_columns"/>
+        from t_car_whitelist cw,t_carinfo c,t_equipment e,t_sys_address a,t_resident r,t_attachment att,t_equipment_type et
+        <where>
+            and cw.car_id = c.id
+            and cw.equipment_id = e.id
+            and c.resident_id = r.id
+            and e.address_code = a.address_code
+            and c.image_id = att.attachment_id
+            and e.equipment_type = et.id
+            <if test="communityCode !=null and communityCode !=''">and r.community_code like #{communityCode,jdbcType=VARCHAR}"%"</if>
+            <if test="carNumber !=null and carNumber !=''">and c.car_number =#{carNumber,jdbcType=VARCHAR}</if>
+            <if test="realName !=null and realName !=''">and r.real_name=#{realName,jdbcType=VARCHAR}</if>
+            <if test="addressCode !=null and addressCode !=''">and a.address_code=#{addressCode,jdbcType=VARCHAR}</if>
+            <if test="synchroStatus !=null">and cw.synchro_status=#{synchroStatus,jdbcType=TINYINT}</if>
+        </where>
+    </select>
+
+    <!--修改一条记录-->
+    <update id="update" parameterType="com.bit.sc.module.car.pojo.CarWihteList">
+        update t_car_whitelist
+        <set>
+            <if test="synchroStatus !=null">
+                synchro_status =#{synchroStatus,jdbcType=TINYINT},
+            </if>
+            <if test="synchroStatus !=null">
+                synchro_time =#{synchroTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!--修改多条记录-->
+    <update id="batchUpdate" parameterType="com.bit.sc.module.car.pojo.CarWihteList">
+        update t_car_whitelist
+        <set>
+            <if test="synchroStatus !=null">
+                synchro_status =#{synchroStatus,jdbcType=TINYINT},
+            </if>
+            <if test="synchroStatus !=null">
+                synchro_time =#{synchroTime,jdbcType=TIMESTAMP}
+            </if>
+        </set>
+        where 1=1 and id in
+        <foreach collection="list" item="item" index="index" separator="," >
+            #{item}
+        </foreach>
+    </update>
+
+    <!--根据addressCode查询设备-->
+    <select id="findEquipmentByAddressCode" resultMap="equipmentMap">
+        select <include refid="Equipment_columns" /> from t_equipment
+        <where>
+            <if test="addressCode !=null and addressCode !=''">and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+        </where>
+    </select>
+
+    <!--添加（授权）-->
+    <insert id="authorize">
+        INSERT INTO t_car_whitelist(
+        equipment_id,
+        device_id,
+        car_id,
+        synchro_status,
+        synchro_time,
+        synchro_count
+        )VALUES(
+        #{equipmentId,jdbcType=BIGINT},
+        #{deviceId,jdbcType=VARCHAR},
+        #{carId,jdbcType=BIGINT},
+        #{synchroStatus,jdbcType=INTEGER},
+        #{synchroTime,jdbcType=TIMESTAMP},
+        #{synchroCount,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <!--批量添加（批量授权）-->
+    <insert id="batchAuthorize" parameterType="java.util.List">
+        INSERT INTO t_car_whitelist(
+        id,
+        device_id,
+        car_id,
+        synchro_status,
+        synchro_time,
+        synchro_count,
+        equipment_id
+        )VALUES
+        <foreach collection="carWihteLists" item="item" index="index" separator="," >
+        (#{item.id},#{item.deviceId},#{item.carId},#{item.synchroStatus},#{item.synchroTime},#{item.synchroCount},#{item.equipmentId})
+    </foreach>
+
+    </insert>
+
+    <!--取消授权-->
+    <delete id="cancelAuthorize" parameterType="java.util.List">
+        delete from t_car_whitelist
+        where 1=1
+        and car_id =#{carId,jdbcType=VARCHAR}
+        and address_code in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--根据carId和设备id查询-->
+    <select id="queryCarWhiteList" resultType="com.bit.sc.module.car.pojo.CarWihteList">
+        select <include refid="CarWihteList_columns" /> from t_car_whitelist
+        <where>
+            <if test="carId !=null and carId !=''">and car_id =#{carId,jdbcType=BIGINT}</if>
+            <if test="equipmentId !=null and equipmentId !=''">and equipment_id =#{equipmentId,jdbcType=BIGINT}</if>
+        </where>
+    </select>
+
+    <!--根据carId删除-->
+    <delete id="deleteByCarId">
+        delete from t_car_whitelist
+        where 1=1 and car_id =#{carId,jdbcType=VARCHAR}
+    </delete>
+
+    <!--根据carId批量删除-->
+    <delete id="batchDeleteByCarId">
+        delete from t_car_whitelist
+        where 1=1 and car_id in
+        <foreach collection="carIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--根据carId关联查询地址id-->
+    <select id="findAddressIdByCarId" parameterType="Long" resultType="java.lang.String">
+        select e.address_code
+        from t_car_whitelist cw
+        LEFT JOIN t_equipment e on cw.equipment_id = e.id
+        <where>
+            and 1=1
+            <if test="carId !=null and carId !=''">and car_id =#{carId,jdbcType=BIGINT}</if>
+        </where>
+
+    </select>
+
+</mapper>

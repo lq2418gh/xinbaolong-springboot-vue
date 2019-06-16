@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.RoleRelInterfacePermissionMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="RoleRelInterfacePermission_columns">
+	    <![CDATA[
+			id as id,
+			role_id as role_id,
+			permission_id as permission_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission" id="roleRelInterfacePermissionMap">
+		<id column="id" property="id"/>
+	    <result column="role_id" property="roleId"/>
+	    <result column="permission_id" property="permissionId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="roleRelInterfacePermissionMap" parameterType="com.bit.sc.module.sys.vo.RoleRelInterfacePermissionVO">
+		select <include refid="RoleRelInterfacePermission_columns" /> from t_sys_role_rel_interface_permission
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="roleId != null and roleId != '' " >and role_id =#{roleId,jdbcType=BIGINT}</if>
+			<if test="permissionId != null and permissionId != '' " >and permission_id =#{permissionId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="roleRelInterfacePermissionMap" parameterType="String">
+		select <include refid="RoleRelInterfacePermission_columns" /> from t_sys_role_rel_interface_permission
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="roleRelInterfacePermissionMap" parameterType="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission">
+		select <include refid="RoleRelInterfacePermission_columns" /> 
+		from t_sys_role_rel_interface_permission
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission">
+	insert INTO t_sys_role_rel_interface_permission (
+		role_id ,
+		permission_id 
+	) VALUES (
+		#{roleId,jdbcType=BIGINT},
+		#{permissionId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!--批量增加-->
+	<insert id="batchAdd"  parameterType="java.util.List">
+		insert INTO t_sys_role_rel_interface_permission (
+		role_id ,
+		permission_id
+		) VALUES
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.roleId,jdbcType=BIGINT},
+			#{item.permissionId,jdbcType=BIGINT}
+			)
+		</foreach>
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission">
+		update t_sys_role_rel_interface_permission
+		<set>
+		<if test="roleId != null">
+		 role_id =#{roleId,jdbcType=BIGINT},
+		</if>
+		<if test="permissionId != null">
+		 permission_id =#{permissionId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission">
+		delete from t_sys_role_rel_interface_permission 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="list">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_role_rel_interface_permission
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+	<!-- 根据role 删除-->
+	<delete id="deleteByRoleId">
+		delete from t_sys_role_rel_interface_permission where  role_id =#{roleId,jdbcType=BIGINT}
+	</delete>
+
+	<!-- 根据roleId查询权限Id -->
+	<select id="findByRoleId" parameterType="long" resultMap="roleRelInterfacePermissionMap">
+		SELECT
+		<include refid="RoleRelInterfacePermission_columns" />
+		FROM
+			t_sys_role_rel_interface_permission
+		WHERE
+			role_id = #{id}
+	</select>
+	<!-- 根据roleId查询权限-->
+	<select id="findListByRole" resultType="com.bit.sc.module.sys.pojo.RoleRelInterfacePermission">
+		SELECT
+		<include refid="RoleRelInterfacePermission_columns" />
+		FROM
+		t_sys_role_rel_interface_permission
+		WHERE
+		role_id = #{roleId}
+	</select>
+
+</mapper>

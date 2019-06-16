@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.house.dao.HouseMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="House_columns">
+	    <![CDATA[
+			id as id,
+			dzbm as dzbm,
+			dzyslx as dzyslx,
+			dz as dz,
+			jzwmc as jzwmc,
+		
+			bmjc as bmjc,
+			zxdhzb as zxdhzb,
+			zxdzzb as zxdzzb,
+			jwzrqdm as jwzrqdm,
+			sszdyjxzqxdzbm as sszdyjxzqxdzbm,
+		
+			ssjlxxqdzbm as ssjlxxqdzbm,
+			dzzczbs as dzzczbs,
+			dzzzybs as dzzzybs,
+			gxsj as gxsj,
+			qyrq as qyrq,
+		
+			tyrq as tyrq,
+			djdw as djdw,
+			house_usage as house_usage,
+			property_type as property_type,
+			isCompanyOwned as isCompanyOwned,
+		
+			company_Info as company_Info,
+			house_type as house_type,
+			house_character as house_character,
+			room_numbers as room_numbers,
+			house_square as house_square,
+		
+			house_usage_purpose as house_usage_purpose,
+			living_numbers as living_numbers,
+			domestic_number as domestic_number,
+			foreigner_number as foreigner_number,
+			noHukou_number as noHukou_number,
+		
+			house_owner_Info as house_owner_Info,
+			custodian_Info as custodian_Info,
+			rentPerson_Info as rentPerson_Info,
+
+
+			synchro_status as synchro_status,
+			synchro_time as synchro_time,
+			synchro_count as synchro_count,
+			create_time as create_time,
+			isRent as isRent
+
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.house.pojo.House" id="houseMap">
+		<id column="id" property="id"/>
+	    <result column="dzbm" property="dzbm"/>
+	    <result column="dzyslx" property="dzyslx"/>
+	    <result column="dz" property="dz"/>
+	    <result column="jzwmc" property="jzwmc"/>
+	    <result column="bmjc" property="bmjc"/>
+	    <result column="zxdhzb" property="zxdhzb"/>
+	    <result column="zxdzzb" property="zxdzzb"/>
+	    <result column="jwzrqdm" property="jwzrqdm"/>
+	    <result column="sszdyjxzqxdzbm" property="sszdyjxzqxdzbm"/>
+	    <result column="ssjlxxqdzbm" property="ssjlxxqdzbm"/>
+	    <result column="dzzczbs" property="dzzczbs"/>
+	    <result column="dzzzybs" property="dzzzybs"/>
+	    <result column="gxsj" property="gxsj"/>
+	    <result column="qyrq" property="qyrq"/>
+	    <result column="tyrq" property="tyrq"/>
+	    <result column="djdw" property="djdw"/>
+	    <result column="house_usage" property="houseUsage"/>
+	    <result column="property_type" property="propertyType"/>
+	    <result column="isCompanyOwned" property="isCompanyOwned"/>
+	    <result column="company_Info" property="companyInfo"/>
+	    <result column="house_type" property="houseType"/>
+	    <result column="house_character" property="houseCharacter"/>
+	    <result column="room_numbers" property="roomNumbers"/>
+	    <result column="house_square" property="houseSquare"/>
+	    <result column="house_usage_purpose" property="houseUsagePurpose"/>
+	    <result column="living_numbers" property="livingNumbers"/>
+	    <result column="domestic_number" property="domesticNumber"/>
+	    <result column="foreigner_number" property="foreignerNumber"/>
+	    <result column="noHukou_number" property="noHukouNumber"/>
+	    <result column="house_owner_Info" property="houseOwnerInfo"/>
+	    <result column="custodian_Info" property="custodianInfo"/>
+	    <result column="rentPerson_Info" property="rentPersonInfo"/>
+
+		<result column="synchro_status" property="synchroStatus"/>
+		<result column="synchro_time" property="synchroTime"/>
+		<result column="synchro_count" property="synchroCount"/>
+		<result column="create_time" property="createTime"/>
+		<result column="isRent" property="isRent"/>
+
+
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="houseMap" parameterType="com.bit.sc.module.house.vo.HouseVO">
+		select <include refid="House_columns" /> from t_ga_house
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+			<if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+			<if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+			<if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+			<if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+			<if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+			<if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+			<if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+			<if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+			<if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+			<if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+			<if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+			<if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+			<if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+			<if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+			<if test="isCompanyOwned != null  " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+			<if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+			<if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+			<if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+			<if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+			<if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+			<if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+			<if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+			<if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+			<if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+			<if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+			<if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+			<if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+			<if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+
+            <if test="synchroStatus != null  " >and synchro_status =#{synchroStatus,jdbcType=INTEGER}</if>
+            <if test="synchroCount != null  " >and synchro_count =#{synchroCount,jdbcType=VARCHAR}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="houseMap" parameterType="String">
+		select <include refid="House_columns" /> from t_ga_house
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="houseMap" parameterType="com.bit.sc.module.house.pojo.House">
+		select <include refid="House_columns" /> 
+		from t_ga_house
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.house.pojo.House" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+	insert INTO t_ga_house (
+		dzbm ,
+		dzyslx ,
+		dz ,
+		jzwmc ,
+		bmjc ,
+		zxdhzb ,
+		zxdzzb ,
+		jwzrqdm ,
+		sszdyjxzqxdzbm ,
+		ssjlxxqdzbm ,
+		dzzczbs ,
+		dzzzybs ,
+		gxsj ,
+		qyrq ,
+		tyrq ,
+		djdw ,
+		house_usage ,
+		property_type ,
+		isCompanyOwned ,
+		company_Info ,
+		house_type ,
+		house_character ,
+		room_numbers ,
+		house_square ,
+		house_usage_purpose ,
+		living_numbers ,
+		domestic_number ,
+		foreigner_number ,
+		noHukou_number ,
+		house_owner_Info ,
+		custodian_Info ,
+		rentPerson_Info ,
+
+		synchro_status,
+		synchro_time,
+		synchro_count,
+		create_time,
+		isRent
+	) VALUES (
+		#{dzbm,jdbcType=VARCHAR},
+		#{dzyslx,jdbcType=VARCHAR},
+		#{dz,jdbcType=BIGINT},
+		#{jzwmc,jdbcType=VARCHAR},
+		#{bmjc,jdbcType=VARCHAR},
+		#{zxdhzb,jdbcType=VARCHAR},
+		#{zxdzzb,jdbcType=VARCHAR},
+		#{jwzrqdm,jdbcType=VARCHAR},
+		#{sszdyjxzqxdzbm,jdbcType=VARCHAR},
+		#{ssjlxxqdzbm,jdbcType=VARCHAR},
+		#{dzzczbs,jdbcType=VARCHAR},
+		#{dzzzybs,jdbcType=VARCHAR},
+		#{gxsj,jdbcType=TIMESTAMP},
+		#{qyrq,jdbcType=TIMESTAMP},
+		#{tyrq,jdbcType=TIMESTAMP},
+		#{djdw,jdbcType=VARCHAR},
+		#{houseUsage,jdbcType=BIGINT},
+		#{propertyType,jdbcType=BIGINT},
+		#{isCompanyOwned,jdbcType=INTEGER},
+		#{companyInfo,jdbcType=BIGINT},
+		#{houseType,jdbcType=BIGINT},
+		#{houseCharacter,jdbcType=BIGINT},
+		#{roomNumbers,jdbcType=INTEGER},
+		#{houseSquare,jdbcType=VARCHAR},
+		#{houseUsagePurpose,jdbcType=BIGINT},
+		#{livingNumbers,jdbcType=INTEGER},
+		#{domesticNumber,jdbcType=INTEGER},
+		#{foreignerNumber,jdbcType=INTEGER},
+		#{noHukouNumber,jdbcType=INTEGER},
+		#{houseOwnerInfo,jdbcType=BIGINT},
+		#{custodianInfo,jdbcType=BIGINT},
+		#{rentPersonInfo,jdbcType=BIGINT},
+
+		#{synchroStatus,jdbcType=INTEGER},
+		#{synchroTime,jdbcType=TIMESTAMP},
+		#{synchroCount,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{isRent,jdbcType=INTEGER}
+	)
+	</insert>
+
+
+
+
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.house.pojo.House">
+		update t_ga_house
+		<set>
+		<if test="dzbm != null">
+		 dzbm =#{dzbm,jdbcType=VARCHAR},
+		</if>
+		<if test="dzyslx != null">
+		 dzyslx =#{dzyslx,jdbcType=VARCHAR},
+		</if>
+		<if test="dz != null">
+		 dz =#{dz,jdbcType=BIGINT},
+		</if>
+		<if test="jzwmc != null">
+		 jzwmc =#{jzwmc,jdbcType=VARCHAR},
+		</if>
+		<if test="bmjc != null">
+		 bmjc =#{bmjc,jdbcType=VARCHAR},
+		</if>
+		<if test="zxdhzb != null">
+		 zxdhzb =#{zxdhzb,jdbcType=VARCHAR},
+		</if>
+		<if test="zxdzzb != null">
+		 zxdzzb =#{zxdzzb,jdbcType=VARCHAR},
+		</if>
+		<if test="jwzrqdm != null">
+		 jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR},
+		</if>
+		<if test="sszdyjxzqxdzbm != null">
+		 sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR},
+		</if>
+		<if test="ssjlxxqdzbm != null">
+		 ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR},
+		</if>
+		<if test="dzzczbs != null">
+		 dzzczbs =#{dzzczbs,jdbcType=VARCHAR},
+		</if>
+		<if test="dzzzybs != null">
+		 dzzzybs =#{dzzzybs,jdbcType=VARCHAR},
+		</if>
+		<if test="gxsj != null">
+		 gxsj =#{gxsj,jdbcType=TIMESTAMP},
+		</if>
+		<if test="qyrq != null">
+		 qyrq =#{qyrq,jdbcType=TIMESTAMP},
+		</if>
+		<if test="tyrq != null">
+		 tyrq =#{tyrq,jdbcType=TIMESTAMP},
+		</if>
+		<if test="djdw != null">
+		 djdw =#{djdw,jdbcType=VARCHAR},
+		</if>
+		<if test="houseUsage != null">
+		 house_usage =#{houseUsage,jdbcType=BIGINT},
+		</if>
+		<if test="propertyType != null">
+		 property_type =#{propertyType,jdbcType=BIGINT},
+		</if>
+		<if test="isCompanyOwned != null">
+		 isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER},
+		</if>
+		<if test="companyInfo != null">
+		 company_Info =#{companyInfo,jdbcType=BIGINT},
+		</if>
+		<if test="houseType != null">
+		 house_type =#{houseType,jdbcType=BIGINT},
+		</if>
+		<if test="houseCharacter != null">
+		 house_character =#{houseCharacter,jdbcType=BIGINT},
+		</if>
+		<if test="roomNumbers != null">
+		 room_numbers =#{roomNumbers,jdbcType=INTEGER},
+		</if>
+		<if test="houseSquare != null">
+		 house_square =#{houseSquare,jdbcType=VARCHAR},
+		</if>
+		<if test="houseUsagePurpose != null">
+		 house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT},
+		</if>
+		<if test="livingNumbers != null">
+		 living_numbers =#{livingNumbers,jdbcType=INTEGER},
+		</if>
+		<if test="domesticNumber != null">
+		 domestic_number =#{domesticNumber,jdbcType=INTEGER},
+		</if>
+		<if test="foreignerNumber != null">
+		 foreigner_number =#{foreignerNumber,jdbcType=INTEGER},
+		</if>
+		<if test="noHukouNumber != null">
+		 noHukou_number =#{noHukouNumber,jdbcType=INTEGER},
+		</if>
+		<if test="houseOwnerInfo != null">
+		 house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT},
+		</if>
+		<if test="custodianInfo != null">
+		 custodian_Info =#{custodianInfo,jdbcType=BIGINT},
+		</if>
+		<if test="rentPersonInfo != null">
+		 rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT},
+		</if>
+
+
+            <if test="synchroStatus != null">
+                synchro_status =#{synchroStatus,jdbcType=INTEGER},
+            </if>
+            <if test="synchroStatus != null">
+                synchro_time =#{synchroTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="synchroStatus != null">
+                synchro_count =#{synchroCount,jdbcType=INTEGER},
+            </if>
+            <if test="synchroStatus != null">
+                create_time =#{createTime,jdbcType=TIMESTAMP},
+            </if>
+			<if test="isRent != null">
+				isRent =#{isRent,jdbcType=INTEGER}
+			</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.house.pojo.House">
+		delete from t_ga_house 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+
+	delete from t_ga_house
+	id in
+	<foreach collection="ids" item="id" open="(" separator="," close=")">
+		#{id}
+	</foreach>
+
+	</delete>
+
+
+	<select id="querylistAllDictByPage" parameterType="com.bit.sc.module.house.vo.HouseVO" resultType="com.bit.sc.module.house.vo.HouseDictVO">
+		SELECT t1.*, t2.value ,t3.value as value1,t4.value as value2,t5.value as value3
+		FROM t_ga_house t1
+		LEFT JOIN t_sys_dict t2  on t1.house_usage = t2.id
+		LEFT join t_sys_dict t3  on t1.house_type = t3.id
+		LEFT JOIN t_sys_dict t4  on t1.house_character = t4.id
+		LEFT join t_sys_dict t5  on t1.house_usage_purpose = t5.id
+
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+			<if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+			<if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+			<if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+			<if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+			<if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+			<if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+			<if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+			<if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+			<if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+			<if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+			<if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+			<if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+			<if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+			<if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+			<if test="isCompanyOwned != null and isCompanyOwned != '' " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+			<if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+			<if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+			<if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+			<if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+			<if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+			<if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+			<if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+			<if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+			<if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+			<if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+			<if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+			<if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+			<if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+
+            <if test="synchroStatus != null  " >and synchro_status =#{synchroStatus,jdbcType=INTEGER}</if>
+            <if test="synchroCount != null  " >and synchro_count =#{synchroCount,jdbcType=VARCHAR}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+		</where>
+	</select>
+
+	<select id="querylistAllDictByOwnerPage" parameterType="com.bit.sc.module.house.vo.HouseVO" resultType="com.bit.sc.module.house.vo.HouseDictVO">
+
+		SELECT
+		h.*,c.juridical_person_name as name,c.juridical_person_contact_phone as phone ,d1.`value` as value1,d2.`value` as value2,d3.`value` as value3,d4.`value` as value4 ,d5.`value` as value5
+		FROM
+		t_ga_house h
+		INNER JOIN t_ga_real_company c
+		on h.company_Info=c.id
+		INNER JOIN t_sys_dict d1
+		on h.house_usage=d1.id
+		INNER JOIN t_sys_dict d2
+		on h.house_type=d2.id
+		INNER JOIN t_sys_dict d3
+		on h.house_character=d3.id
+		INNER JOIN t_sys_dict d4
+		on h.house_usage_purpose=d4.id
+		INNER JOIN t_sys_dict d5
+		on h.property_type=d5.id
+		<where>
+			h.isCompanyOwned = 0
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+			<if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+			<if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+			<if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+			<if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+			<if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+			<if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+			<if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+			<if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+			<if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+			<if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+			<if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+			<if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+			<if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+			<if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+			<if test="isCompanyOwned != null and isCompanyOwned != '' " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+			<if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+			<if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+			<if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+			<if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+			<if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+			<if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+			<if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+			<if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+			<if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+			<if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+			<if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+			<if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+			<if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+
+		</where>
+
+		UNION
+
+		SELECT
+		h.*,o.real_name as name,o.phone as phone ,d1.`value` as value1,d2.`value` as value2,d3.`value` as value3,d4.`value` as value4 ,d5.`value` as value5
+		FROM
+		t_ga_house h
+		INNER JOIN t_ga_owner_custodian_rent o
+		on h.house_owner_Info=o.id
+		INNER JOIN t_sys_dict d1
+		on h.house_usage=d1.id
+		INNER JOIN t_sys_dict d2
+		on h.house_type=d2.id
+		INNER JOIN t_sys_dict d3
+		on h.house_character=d3.id
+		INNER JOIN t_sys_dict d4
+		on h.house_usage_purpose=d4.id
+		INNER JOIN t_sys_dict d5
+		on h.property_type=d5.id
+		<where>
+			h.isCompanyOwned = 1
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+			<if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+			<if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+			<if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+			<if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+			<if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+			<if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+			<if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+			<if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+			<if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+			<if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+			<if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+			<if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+			<if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+			<if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+			<if test="isCompanyOwned != null and isCompanyOwned != '' " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+			<if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+			<if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+			<if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+			<if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+			<if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+			<if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+			<if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+			<if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+			<if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+			<if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+			<if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+			<if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+			<if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+
+		</where>
+	</select>
+
+
+
+	<select id="getrealPersonByPage" parameterType="com.bit.sc.module.house.vo.HouseVO" resultType="com.bit.sc.module.house.vo.RealPersonHouseVO">
+		SELECT t1.*,t3.*,d1.`value` as value1,d2.`value` as value2,d3.`value` as value3,d4.`value` as value4,d5.`value` as value5 ,
+		d6.`value` as value6,d7.`value` as value7,d8.`value` as value8,d9.`value` as value9
+		from t_ga_house t1
+		INNER JOIN t_ga_house_rel_realperson t2
+		on t1.id = t2.house_id
+		LEFT JOIN t_ga_real_person t3
+		on t2.realperson_id = t3.id
+
+		INNER JOIN t_sys_dict d1
+		on t1.house_usage=d1.id
+		INNER JOIN t_sys_dict d2
+		on t1.house_type=d2.id
+		INNER JOIN t_sys_dict d3
+		on t1.house_character=d3.id
+		INNER JOIN t_sys_dict d4
+		on t1.house_usage_purpose=d4.id
+		INNER JOIN t_sys_dict d5
+		on t1.property_type=d5.id
+
+		INNER JOIN t_sys_dict d6
+		on t3.people = d6.id
+		INNER JOIN t_sys_dict d7
+		on t3.political = d7.id
+		INNER JOIN t_sys_dict d8
+		on t3.education = d8.id
+		INNER JOIN t_sys_dict d9
+		on t3.marriage = d9.id
+
+        <where>
+            <if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+            <if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+            <if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+            <if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+            <if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+            <if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+            <if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+            <if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+            <if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+            <if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+            <if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+            <if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+            <if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+            <if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+            <if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+            <if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+            <if test="isCompanyOwned != null and isCompanyOwned != '' " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+            <if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+            <if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+            <if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+            <if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+            <if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+            <if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+            <if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+            <if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+            <if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+            <if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+            <if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+            <if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+            <if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+
+            <if test="synchroStatus != null  " >and synchro_status =#{synchroStatus,jdbcType=INTEGER}</if>
+            <if test="synchroCount != null  " >and synchro_count =#{synchroCount,jdbcType=VARCHAR}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+		</where>
+	</select>
+
+    <select id="getregisteredResidentByPage" parameterType="com.bit.sc.module.house.vo.HouseVO" resultType="com.bit.sc.module.house.vo.RegisteredResidentHouseVO">
+        SELECT t1.*,t3.*,d1.`value` as value1,d2.`value` as value2,d3.`value` as value3,d4.`value` as value4,d5.`value` as value5 ,
+        d6.`value` as value6,d7.`value` as value7,d8.`value` as value8,d9.`value` as value9,d10.`value` as value10
+        from t_ga_house t1
+        INNER JOIN t_ga_house_rel_registered_resident t2
+        on t1.id = t2.house_id
+        LEFT JOIN t_ga_registered_resident t3
+        on t2.registered_id = t3.id
+
+        INNER JOIN t_sys_dict d1
+        on t1.house_usage=d1.id
+        INNER JOIN t_sys_dict d2
+        on t1.house_type=d2.id
+        INNER JOIN t_sys_dict d3
+        on t1.house_character=d3.id
+        INNER JOIN t_sys_dict d4
+        on t1.house_usage_purpose=d4.id
+        INNER JOIN t_sys_dict d5
+        on t1.property_type=d5.id
+
+        INNER JOIN t_sys_dict d6
+        on t3.people = d6.id
+        INNER JOIN t_sys_dict d7
+        on t3.political = d7.id
+        INNER JOIN t_sys_dict d8
+        on t3.education = d8.id
+        INNER JOIN t_sys_dict d9
+        on t3.marriage = d9.id
+        INNER JOIN t_sys_dict d10
+        on t3.sex = d10.id
+        <where>
+            <if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+            <if test="dzbm != null and dzbm != '' " >and dzbm =#{dzbm,jdbcType=VARCHAR}</if>
+            <if test="dzyslx != null and dzyslx != '' " >and dzyslx =#{dzyslx,jdbcType=VARCHAR}</if>
+            <if test="dz != null  " >and dz =#{dz,jdbcType=BIGINT}</if>
+            <if test="jzwmc != null and jzwmc != '' " >and jzwmc =#{jzwmc,jdbcType=VARCHAR}</if>
+            <if test="bmjc != null and bmjc != '' " >and bmjc =#{bmjc,jdbcType=VARCHAR}</if>
+            <if test="zxdhzb != null and zxdhzb != '' " >and zxdhzb =#{zxdhzb,jdbcType=VARCHAR}</if>
+            <if test="zxdzzb != null and zxdzzb != '' " >and zxdzzb =#{zxdzzb,jdbcType=VARCHAR}</if>
+            <if test="jwzrqdm != null and jwzrqdm != '' " >and jwzrqdm =#{jwzrqdm,jdbcType=VARCHAR}</if>
+            <if test="sszdyjxzqxdzbm != null and sszdyjxzqxdzbm != '' " >and sszdyjxzqxdzbm =#{sszdyjxzqxdzbm,jdbcType=VARCHAR}</if>
+            <if test="ssjlxxqdzbm != null and ssjlxxqdzbm != '' " >and ssjlxxqdzbm =#{ssjlxxqdzbm,jdbcType=VARCHAR}</if>
+            <if test="dzzczbs != null and dzzczbs != '' " >and dzzczbs =#{dzzczbs,jdbcType=VARCHAR}</if>
+            <if test="dzzzybs != null and dzzzybs != '' " >and dzzzybs =#{dzzzybs,jdbcType=VARCHAR}</if>
+            <if test="djdw != null and djdw != '' " >and djdw =#{djdw,jdbcType=VARCHAR}</if>
+            <if test="houseUsage != null  " >and house_usage =#{houseUsage,jdbcType=BIGINT}</if>
+            <if test="propertyType != null  " >and property_type =#{propertyType,jdbcType=BIGINT}</if>
+            <if test="isCompanyOwned != null and isCompanyOwned != '' " >and isCompanyOwned =#{isCompanyOwned,jdbcType=INTEGER}</if>
+            <if test="companyInfo != null  " >and company_Info =#{companyInfo,jdbcType=BIGINT}</if>
+            <if test="houseType != null  " >and house_type =#{houseType,jdbcType=BIGINT}</if>
+            <if test="houseCharacter != null  " >and house_character =#{houseCharacter,jdbcType=BIGINT}</if>
+            <if test="roomNumbers != null and roomNumbers != '' " >and room_numbers =#{roomNumbers,jdbcType=INTEGER}</if>
+            <if test="houseSquare != null and houseSquare != '' " >and house_square =#{houseSquare,jdbcType=VARCHAR}</if>
+            <if test="houseUsagePurpose != null  " >and house_usage_purpose =#{houseUsagePurpose,jdbcType=BIGINT}</if>
+            <if test="livingNumbers != null and livingNumbers != '' " >and living_numbers =#{livingNumbers,jdbcType=INTEGER}</if>
+            <if test="domesticNumber != null and domesticNumber != '' " >and domestic_number =#{domesticNumber,jdbcType=INTEGER}</if>
+            <if test="foreignerNumber != null and foreignerNumber != '' " >and foreigner_number =#{foreignerNumber,jdbcType=INTEGER}</if>
+            <if test="noHukouNumber != null and noHukouNumber != '' " >and noHukou_number =#{noHukouNumber,jdbcType=INTEGER}</if>
+            <if test="houseOwnerInfo != null  " >and house_owner_Info =#{houseOwnerInfo,jdbcType=BIGINT}</if>
+            <if test="custodianInfo != null  " >and custodian_Info =#{custodianInfo,jdbcType=BIGINT}</if>
+            <if test="rentPersonInfo != null  " >and rentPerson_Info =#{rentPersonInfo,jdbcType=BIGINT}</if>
+
+            <if test="synchroStatus != null  " >and synchro_status =#{synchroStatus,jdbcType=INTEGER}</if>
+            <if test="synchroCount != null  " >and synchro_count =#{synchroCount,jdbcType=VARCHAR}</if>
+			<if test="isRent != null  " >and isRent =#{isRent,jdbcType=INTEGER}</if>
+
+		</where>
+    </select>
+
+
+	<select id="getAddress" parameterType="com.bit.sc.module.house.vo.HouseVO" resultType="com.bit.sc.module.house.vo.HouseAddressVO">
+        SELECT t1.id,t1.dz,t1.synchro_status,t1.create_time,t1.house_usage,t1.property_type, t2.address_detail,t2.address_name,t3.`value` as value1, t4.`value` as value2 FROM t_ga_house t1
+        INNER JOIN t_sys_address t2
+        on t1.dz = t2.id
+        INNER JOIN t_sys_dict t3
+        on t1.house_usage = t3.id
+        INNER JOIN t_sys_dict t4
+        on t1.property_type = t4.id
+        <where>
+			<if test="addressCode !=null">
+				and t2.address_code like #{addressCode,jdbcType=VARCHAR}
+			</if>
+            <if test="addressDetail !=null">
+                and t2.address_detail like #{addressDetail,jdbcType=VARCHAR}
+            </if>
+            <if test="houseUsage !=null">
+                and t1.house_usage = #{houseUsage,jdbcType=VARCHAR}
+            </if>
+            <if test="propertyType !=null">
+                and t1.property_type = #{propertyType,jdbcType=VARCHAR}
+            </if>
+        </where>
+	</select>
+</mapper>

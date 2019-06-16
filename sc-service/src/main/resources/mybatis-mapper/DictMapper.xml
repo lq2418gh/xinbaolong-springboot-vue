@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.DictMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Dict_columns">
+	    <![CDATA[
+			id as id,
+			module as module,
+			dict_code as dict_code,
+			value as value,
+			rank as rank
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.Dict" id="dictMap">
+		<id column="id" property="id"/>
+	    <result column="module" property="module"/>
+	    <result column="dict_code" property="dictCode"/>
+	    <result column="value" property="value"/>
+	    <result column="rank" property="rank"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="dictMap" parameterType="com.bit.sc.module.sys.vo.DictVO">
+		select <include refid="Dict_columns" /> from t_sys_dict
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="module != null and module!=''  " >and module =#{module,jdbcType=VARCHAR}</if>
+			<if test="dictCode != null and dictCode!=''  " >and dict_code =#{dictCode,jdbcType=VARCHAR}</if>
+			<if test="value != null and value!=''  " >and value =#{value,jdbcType=VARCHAR}</if>
+			<if test="rank != null  " >and rank =#{rank,jdbcType=TINYINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="dictMap" parameterType="String">
+		select <include refid="Dict_columns" /> from t_sys_dict
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="dictMap" parameterType="com.bit.sc.module.sys.pojo.Dict">
+		select <include refid="Dict_columns" /> 
+		from t_sys_dict
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.Dict">
+	insert INTO t_sys_dict (
+		module ,
+		dict_code ,
+		value ,
+		rank 
+	) VALUES (
+		#{module,jdbcType=VARCHAR},
+		#{dictCode,jdbcType=VARCHAR},
+		#{value,jdbcType=VARCHAR},
+		#{rank,jdbcType=TINYINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.Dict">
+		update t_sys_dict
+		<set>
+		<if test="module != null and module !='' ">
+		 module =#{module,jdbcType=VARCHAR},
+		</if>
+		<if test="dictCode != null and dictCode!='' ">
+		 dict_code =#{dictCode,jdbcType=VARCHAR},
+		</if>
+		<if test="value != null and value !='' ">
+		 value =#{value,jdbcType=VARCHAR},
+		</if>
+		<if test="rank != null">
+		 rank =#{rank,jdbcType=TINYINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.Dict">
+		delete from t_sys_dict 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_dict
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+
+	<select id="listModule" parameterType="string" resultMap="dictMap">
+		SELECT id, dict_code,value,rank
+		FROM t_sys_dict
+		<where>
+			<if test="module != null and module !='' " >and module =#{module}</if>
+		</where>
+		order by rank asc
+	</select>
+
+
+	<select id="queryDictByModuleCode"  resultMap="dictMap">
+		SELECT id, dict_code,value,rank
+		FROM t_sys_dict
+		<where>
+			<if test="module != null and module!='' " >and module =#{module}</if>
+			<if test="dictCode != null and dictCode!='' " >and dict_code =#{dictCode}</if>
+		</where>
+		order by rank asc
+	</select>
+
+	<select id="getDictByModuleLikeValue"  resultMap="dictMap">
+		SELECT id, dict_code,value,rank
+		FROM t_sys_dict
+		<where>
+			<if test="module != null and module!='' " >and module =#{module}</if>
+			<if test="value != null and value!='' " >and value like #{value}</if>
+		</where>
+		order by rank asc
+	</select>
+
+
+
+
+
+
+
+
+
+</mapper>

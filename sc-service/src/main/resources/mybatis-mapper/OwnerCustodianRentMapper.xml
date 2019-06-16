@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.house.dao.OwnerCustodianRentMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="OwnerCustodianRent_columns">
+	    <![CDATA[
+			id as id,
+			real_name as real_name,
+			card_id as card_id,
+			phone as phone,
+			type as type
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.house.pojo.OwnerCustodianRent" id="ownerCustodianRentMap">
+		<id column="id" property="id"/>
+	    <result column="real_name" property="realName"/>
+	    <result column="card_id" property="cardId"/>
+	    <result column="phone" property="phone"/>
+	    <result column="type" property="type"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="ownerCustodianRentMap" parameterType="com.bit.sc.module.house.vo.OwnerCustodianRentVO">
+		select <include refid="OwnerCustodianRent_columns" /> from t_ga_owner_custodian_rent
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="realName != null and realName != '' " >and real_name =#{realName,jdbcType=VARCHAR}</if>
+			<if test="cardId != null and cardId != '' " >and card_id =#{cardId,jdbcType=VARCHAR}</if>
+			<if test="phone != null and phone != '' " >and phone =#{phone,jdbcType=VARCHAR}</if>
+			<if test="type != null and type != '' " >and type =#{type,jdbcType=INTEGER}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="ownerCustodianRentMap" parameterType="String">
+		select <include refid="OwnerCustodianRent_columns" /> from t_ga_owner_custodian_rent
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="ownerCustodianRentMap" parameterType="com.bit.sc.module.house.pojo.OwnerCustodianRent">
+		select <include refid="OwnerCustodianRent_columns" /> 
+		from t_ga_owner_custodian_rent
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.house.pojo.OwnerCustodianRent" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+	insert INTO t_ga_owner_custodian_rent (
+		real_name ,
+		card_id ,
+		phone ,
+		type 
+	) VALUES (
+		#{realName,jdbcType=VARCHAR},
+		#{cardId,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER}
+	)
+	</insert>
+
+
+
+
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.house.pojo.OwnerCustodianRent">
+		update t_ga_owner_custodian_rent
+		<set>
+		<if test="realName != null">
+		 real_name =#{realName,jdbcType=VARCHAR},
+		</if>
+		<if test="cardId != null">
+		 card_id =#{cardId,jdbcType=VARCHAR},
+		</if>
+		<if test="phone != null">
+		 phone =#{phone,jdbcType=VARCHAR},
+		</if>
+		<if test="type != null">
+		 type =#{type,jdbcType=INTEGER}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.house.pojo.OwnerCustodianRent">
+		delete from t_ga_owner_custodian_rent 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+
+	delete from t_ga_owner_custodian_rent
+	id in
+	<foreach collection="ids" item="id" open="(" separator="," close=")">
+		#{id}
+	</foreach>
+
+	</delete>
+</mapper>

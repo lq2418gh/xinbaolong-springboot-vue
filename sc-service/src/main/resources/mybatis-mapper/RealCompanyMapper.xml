@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.house.dao.RealCompanyMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="RealCompany_columns">
+	    <![CDATA[
+			id as id,
+			company_name as company_name,
+			company_type as company_type,
+			organisation_code as organisation_code,
+			contact_phone as contact_phone,
+		
+			juridical_person_name as juridical_person_name,
+			juridical_person_cardid as juridical_person_cardid,
+			juridical_person_certificate_type as juridical_person_certificate_type,
+			juridical_person_certificate_number as juridical_person_certificate_number,
+			juridical_person_contact_phone as juridical_person_contact_phone,
+			chargeman_name as chargeman_name
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.house.pojo.RealCompany" id="realCompanyMap">
+		<id column="id" property="id"/>
+	    <result column="company_name" property="companyName"/>
+	    <result column="company_type" property="companyType"/>
+	    <result column="organisation_code" property="organisationCode"/>
+	    <result column="contact_phone" property="contactPhone"/>
+	    <result column="juridical_person_name" property="juridicalPersonName"/>
+	    <result column="juridical_person_cardid" property="juridicalPersonCardid"/>
+	    <result column="juridical_person_certificate_type" property="juridicalPersonCertificateType"/>
+	    <result column="juridical_person_certificate_number" property="juridicalPersonCertificateNumber"/>
+	    <result column="juridical_person_contact_phone" property="juridicalPersonContactPhone"/>
+		<result column="chargeman_name" property="chargemanName"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="realCompanyMap" parameterType="com.bit.sc.module.house.vo.RealCompanyVO">
+		select <include refid="RealCompany_columns" /> from t_ga_real_company
+		<where>
+			<if test="id != null  " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="companyName != null and companyName != '' " >and company_name =#{companyName,jdbcType=VARCHAR}</if>
+			<if test="companyType != null  " >and company_type =#{companyType,jdbcType=BIGINT}</if>
+			<if test="organisationCode != null and organisationCode != '' " >and organisation_code =#{organisationCode,jdbcType=VARCHAR}</if>
+			<if test="contactPhone != null and contactPhone != '' " >and contact_phone =#{contactPhone,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonName != null and juridicalPersonName != '' " >and juridical_person_name =#{juridicalPersonName,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonCardid != null and juridicalPersonCardid != '' " >and juridical_person_cardid =#{juridicalPersonCardid,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonCertificateType != null  " >and juridical_person_certificate_type =#{juridicalPersonCertificateType,jdbcType=INTEGER}</if>
+			<if test="juridicalPersonCertificateNumber != null and juridicalPersonCertificateNumber != '' " >and juridical_person_certificate_number =#{juridicalPersonCertificateNumber,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonContactPhone != null and juridicalPersonContactPhone != '' " >and juridical_person_contact_phone =#{juridicalPersonContactPhone,jdbcType=VARCHAR}</if>
+			<if test="chargemanName != null and chargemanName!=''">and chargeman_name = #{chargemanName,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="realCompanyMap" parameterType="String">
+		select <include refid="RealCompany_columns" /> from t_ga_real_company
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="realCompanyMap" parameterType="com.bit.sc.module.house.pojo.RealCompany">
+		select <include refid="RealCompany_columns" /> 
+		from t_ga_real_company
+		where 
+        	id =#{id,jdbcType=INTEGER}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.house.pojo.RealCompany" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+	insert INTO t_ga_real_company (
+		company_name ,
+		company_type ,
+		organisation_code ,
+		contact_phone ,
+		juridical_person_name ,
+		juridical_person_cardid ,
+		juridical_person_certificate_type ,
+		juridical_person_certificate_number ,
+		juridical_person_contact_phone,
+		chargeman_name
+	) VALUES (
+		#{companyName,jdbcType=VARCHAR},
+		#{companyType,jdbcType=INTEGER},
+		#{organisationCode,jdbcType=VARCHAR},
+		#{contactPhone,jdbcType=VARCHAR},
+		#{juridicalPersonName,jdbcType=VARCHAR},
+		#{juridicalPersonCardid,jdbcType=VARCHAR},
+		#{juridicalPersonCertificateType,jdbcType=INTEGER},
+		#{juridicalPersonCertificateNumber,jdbcType=VARCHAR},
+		#{juridicalPersonContactPhone,jdbcType=VARCHAR},
+		#{chargemanName,jdbcType=VARCHAR}
+	)
+	</insert>
+
+
+
+
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.house.pojo.RealCompany">
+		update t_ga_real_company
+		<set>
+		<if test="companyName != null">
+		 company_name =#{companyName,jdbcType=VARCHAR},
+		</if>
+		<if test="companyType != null">
+		 company_type =#{companyType,jdbcType=BIGINT},
+		</if>
+		<if test="organisationCode != null">
+		 organisation_code =#{organisationCode,jdbcType=VARCHAR},
+		</if>
+		<if test="contactPhone != null">
+		 contact_phone =#{contactPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="juridicalPersonName != null">
+		 juridical_person_name =#{juridicalPersonName,jdbcType=VARCHAR},
+		</if>
+		<if test="juridicalPersonCardid != null">
+		 juridical_person_cardid =#{juridicalPersonCardid,jdbcType=VARCHAR},
+		</if>
+		<if test="juridicalPersonCertificateType != null">
+		 juridical_person_certificate_type =#{juridicalPersonCertificateType,jdbcType=INTEGER},
+		</if>
+		<if test="juridicalPersonCertificateNumber != null">
+		 juridical_person_certificate_number =#{juridicalPersonCertificateNumber,jdbcType=VARCHAR},
+		</if>
+		<if test="juridicalPersonContactPhone != null">
+		 juridical_person_contact_phone =#{juridicalPersonContactPhone,jdbcType=VARCHAR},
+		</if>
+		<if test="chargemanName != null ">
+			chargeman_name = #{chargemanName,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.house.pojo.RealCompany">
+		delete from t_ga_real_company 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+
+	delete from t_ga_real_company
+	id in
+	<foreach collection="ids" item="id" open="(" separator="," close=")">
+		#{id}
+	</foreach>
+
+	</delete>
+
+
+	<select id="querylistAllDictByPage" parameterType="com.bit.sc.module.house.vo.RealCompanyVO" resultType="com.bit.sc.module.house.vo.RealCompanyDictVO">
+
+        SELECT t1.*, t2.value ,t3.value as value1
+        FROM t_ga_real_company t1
+        LEFT JOIN t_sys_dict t2  on t1.company_type = t2.id
+        LEFT join t_sys_dict t3  on t1.juridical_person_certificate_type = t3.id
+		<where>
+			<if test="id != null  " >and t1.id =#{id,jdbcType=BIGINT}</if>
+			<if test="companyName != null and companyName != '' " >and t1.company_name =#{companyName,jdbcType=VARCHAR}</if>
+			<if test="companyType != null  " >and t1.company_type =#{companyType,jdbcType=BIGINT}</if>
+			<if test="organisationCode != null and organisationCode != '' " >and t1.organisation_code =#{organisationCode,jdbcType=VARCHAR}</if>
+			<if test="contactPhone != null and contactPhone != '' " >and t1.contact_phone =#{contactPhone,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonName != null and juridicalPersonName != '' " >and t1.juridical_person_name =#{juridicalPersonName,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonCardid != null and juridicalPersonCardid != '' " >and t1.juridical_person_cardid =#{juridicalPersonCardid,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonCertificateType != null  " >and t1.juridical_person_certificate_type =#{juridicalPersonCertificateType,jdbcType=INTEGER}</if>
+			<if test="juridicalPersonCertificateNumber != null and juridicalPersonCertificateNumber != '' " >and t1.juridical_person_certificate_number =#{juridicalPersonCertificateNumber,jdbcType=VARCHAR}</if>
+			<if test="juridicalPersonContactPhone != null and juridicalPersonContactPhone != '' " >and t1.juridical_person_contact_phone =#{juridicalPersonContactPhone,jdbcType=VARCHAR}</if>
+			<if test="chargemanName != null and chargemanName!=''">and chargeman_name = #{chargemanName,jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+</mapper>

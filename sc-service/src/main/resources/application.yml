@@ -1,0 +1,66 @@
+server:
+  port: 8083
+mybatis:
+  mapper-locations: classpath:mybatis-mapper/*.xml
+  config-location:  classpath:mybatis-config.xml
+swagger:
+  basePath: com.bit.soft.service.controller
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: countSql
+logging:
+  level:
+     com.bit.sc.module : debug
+redis:
+   hostName: 200.200.3.38
+   port: 6379
+   timeout: 300
+   maxIdle : 300
+   maxTotal: 1000
+   maxWaitMillis: 3000
+   minEvictableIdleTimeMillis : 300000
+   numTestsPerEvictionRun : 1024
+   timeBetweenEvictionRunsMillis : 30000
+   testOnBorrow : true
+   testWhileIdle : true
+spring:
+  data:
+    mongodb:
+      uri: mongodb://test:123456@200.200.3.38:27017/sc
+  datasource:
+    #name: test
+    url: jdbc:mysql://200.200.3.38:3306/sc_dev?useUnicode=true&characterEncoding=utf8
+    username: root
+    #使用远程的配置中心的参数
+    password: 123456
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+servlet:
+     multipart:
+       max-file-size: 100Mb
+       max-request-size: 100Mb
+
+#第三方接口调用总地址
+facestar:
+      address: http://200.200.3.60:8080/nss-cloud2-api
+      #clientId: 8f66bc5d
+      #clientSecret: a49a0cc3-4944-4e48-be95-4ba0c7a0ef37
+      loginName: sysadmin
+      password: 12345678
+

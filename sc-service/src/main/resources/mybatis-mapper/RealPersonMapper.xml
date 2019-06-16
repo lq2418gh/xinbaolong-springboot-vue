@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.house.dao.RealPersonMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="RealPerson_columns">
+	    <![CDATA[
+			id as id,
+			real_name as real_name,
+			card_id as card_id,
+			sex as sex,
+			hjdz as hjdz,
+		
+			relation_owner as relation_owner,
+			mobile as mobile,
+
+			reason as reason,
+			arrive_time as arrive_time,
+		
+			leave_time as leave_time,
+			person_type as person_type,
+		
+			people as people,
+			political as political,
+			education as education,
+			marriage as marriage,
+			worklocation as worklocation,
+			picture as picture,
+
+			house_id as house_id,
+			isHouseholder as isHouseholder,
+			certificate_type as certificate_type,
+			certificate_picture as certificate_picture,
+			isStay as isStay
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.house.pojo.RealPerson" id="realPersonMap">
+		<id column="id" property="id"/>
+	    <result column="real_name" property="realName"/>
+	    <result column="card_id" property="cardId"/>
+	    <result column="sex" property="sex"/>
+	    <result column="hjdz" property="hjdz"/>
+	    <result column="relation_owner" property="relationOwner"/>
+	    <result column="mobile" property="mobile"/>
+
+	    <result column="reason" property="reason"/>
+	    <result column="arrive_time" property="arriveTime"/>
+	    <result column="leave_time" property="leaveTime"/>
+	    <result column="person_type" property="personType"/>
+
+	    <result column="people" property="people"/>
+	    <result column="political" property="political"/>
+	    <result column="education" property="education"/>
+	    <result column="marriage" property="marriage"/>
+	    <result column="worklocation" property="worklocation"/>
+		<result column="picture" property="picture"/>
+
+		<result column="house_id" property="houseId"/>
+		<result column="isHouseholder" property="isHouseholder"/>
+		<result column="certificate_type" property="certificateType"/>
+		<result column="certificate_picture" property="certificatePicture"/>
+		<result column="isStay" property="isStay"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="realPersonMap" parameterType="com.bit.sc.module.house.vo.RealPersonVO">
+		select <include refid="RealPerson_columns" /> from t_ga_real_person
+        <where>
+            <if test="id != null  " >and id =#{id,jdbcType=BIGINT}</if>
+            <if test="realName != null and realName != '' " >and real_name =#{realName,jdbcType=VARCHAR}</if>
+            <if test="cardId != null and cardId != '' " >and card_id =#{cardId,jdbcType=VARCHAR}</if>
+            <if test="sex != null  " >and sex =#{sex,jdbcType=BIGINT}</if>
+            <if test="hjdz != null and hjdz != '' " >and hjdz =#{hjdz,jdbcType=VARCHAR}</if>
+            <if test="relationOwner != null and relationOwner != '' " >and relation_owner =#{relationOwner,jdbcType=VARCHAR}</if>
+            <if test="mobile != null and mobile != '' " >and mobile =#{mobile,jdbcType=VARCHAR}</if>
+
+            <if test="reason != null and reason != '' " >and reason =#{reason,jdbcType=VARCHAR}</if>
+            <if test="personType != null and personType !=''  " >and specialperson =#{personType,jdbcType=VARCHAR}</if>
+
+            <if test="people != null  " >and people =#{people,jdbcType=BIGINT}</if>
+            <if test="political != null  " >and political =#{political,jdbcType=BIGINT}</if>
+            <if test="education != null  " >and education =#{education,jdbcType=BIGINT}</if>
+            <if test="marriage != null " >and marriage =#{marriage,jdbcType=BIGINT}</if>
+            <if test="worklocation != null and worklocation != '' " >and worklocation =#{worklocation,jdbcType=VARCHAR}</if>
+			<if test="picture != null  " >and picture =#{picture,jdbcType=BIGINT}</if>
+			<if test="houseId != null  " >and house_id =#{houseId,jdbcType=BIGINT}</if>
+			<if test="isHouseholder != null  " >and isHouseholder =#{isHouseholder,jdbcType=INTEGER}</if>
+			<if test="certificateType != null  " >and certificate_type =#{certificateType,jdbcType=INTEGER}</if>
+			<if test="certificatePicture != null and certificatePicture != '' " >and certificate_picture =#{certificatePicture,jdbcType=VARCHAR}</if>
+			<if test="isStay != null  " >and isStay =#{isStay,jdbcType=INTEGER}</if>
+        </where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="realPersonMap" parameterType="String">
+		select <include refid="RealPerson_columns" /> from t_ga_real_person
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="realPersonMap" parameterType="com.bit.sc.module.house.pojo.RealPerson">
+		select <include refid="RealPerson_columns" /> 
+		from t_ga_real_person
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.house.pojo.RealPerson" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+	insert INTO t_ga_real_person (
+		real_name ,
+		card_id ,
+		sex ,
+		hjdz ,
+		relation_owner ,
+		mobile ,
+		reason ,
+		arrive_time ,
+		leave_time ,
+		person_type ,
+		people ,
+		political ,
+		education ,
+		marriage ,
+		worklocation,
+		picture,
+		house_id,
+		isHouseholder,
+		certificate_type ,
+		certificate_picture,
+		isStay
+	) VALUES (
+		#{realName,jdbcType=VARCHAR},
+		#{cardId,jdbcType=VARCHAR},
+		#{sex,jdbcType=INTEGER},
+		#{hjdz,jdbcType=VARCHAR},
+		#{relationOwner,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{reason,jdbcType=VARCHAR},
+		#{arriveTime,jdbcType=TIMESTAMP},
+		#{leaveTime,jdbcType=TIMESTAMP},
+		#{personType,jdbcType=VARCHAR},
+		#{people,jdbcType=BIGINT},
+		#{political,jdbcType=BIGINT},
+		#{education,jdbcType=BIGINT},
+		#{marriage,jdbcType=BIGINT},
+		#{worklocation,jdbcType=VARCHAR},
+		#{picture,jdbcType=BIGINT},
+		#{houseId,jdbcType=BIGINT},
+		#{isHouseholder,jdbcType=INTEGER},
+		#{certificateType,jdbcType=INTEGER},
+		#{certificatePicture,jdbcType=VARCHAR},
+		#{isStay,jdbcType=INTEGER}
+	)
+	</insert>
+
+
+
+
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.house.pojo.RealPerson">
+		update t_ga_real_person
+		<set>
+		<if test="realName != null">
+		 real_name =#{realName,jdbcType=VARCHAR},
+		</if>
+		<if test="cardId != null">
+		 card_id =#{cardId,jdbcType=VARCHAR},
+		</if>
+		<if test="sex != null">
+		 sex =#{sex,jdbcType=INTEGER},
+		</if>
+		<if test="hjdz != null">
+		 hjdz =#{hjdz,jdbcType=VARCHAR},
+		</if>
+		<if test="relationOwner != null">
+		 relation_owner =#{relationOwner,jdbcType=VARCHAR},
+		</if>
+		<if test="mobile != null">
+		 mobile =#{mobile,jdbcType=VARCHAR},
+		</if>
+
+		<if test="reason != null">
+		 reason =#{reason,jdbcType=VARCHAR},
+		</if>
+		<if test="arriveTime != null">
+		 arrive_time =#{arriveTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="leaveTime != null">
+		 leave_time =#{leaveTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="personType != null">
+		 person_type =#{personType,jdbcType=INTEGER},
+		</if>
+
+		<if test="people != null">
+		 people =#{people,jdbcType=BIGINT},
+		</if>
+		<if test="political != null">
+		 political =#{political,jdbcType=BIGINT},
+		</if>
+		<if test="education != null">
+		 education =#{education,jdbcType=BIGINT},
+		</if>
+		<if test="marriage != null">
+		 marriage =#{marriage,jdbcType=BIGINT},
+		</if>
+		<if test="worklocation != null">
+		 worklocation =#{worklocation,jdbcType=VARCHAR},
+		</if>
+		<if test="picture != null">
+			picture =#{picture,jdbcType=BIGINT},
+		</if>
+		<if test="houseId !=null">
+			house_id = #{houseId,jdbcType=BIGINT},
+		</if>
+		<if test="isHouseholder !=null">
+			isHouseholder = #{isHouseholder,jdbcType=INTEGER},
+		</if>
+		<if test="certificateType != null">
+			certificate_type =#{certificateType,jdbcType=INTEGER},
+		</if>
+		<if test="certificatePicture != null">
+			certificate_picture =#{certificatePicture,jdbcType=VARCHAR},
+		</if>
+		<if test="isStay != null">
+			isStay =#{isStay,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.house.pojo.RealPerson">
+		delete from t_ga_real_person 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+
+	delete from t_ga_real_person
+	id in
+	<foreach collection="ids" item="id" open="(" separator="," close=")">
+		#{id}
+	</foreach>
+
+	</delete>
+
+
+	<select id="querylistAllDictByPage" parameterType="com.bit.sc.module.house.vo.RealPersonVO" resultType="com.bit.sc.module.house.vo.RealPersonDictVO">
+		SELECT t1.*, t2.value ,t3.value as value1,t4.value as value2,t5.value as value3,t6.value as value4
+		FROM t_ga_real_person t1
+		LEFT JOIN t_sys_dict t2  on t1.sex = t2.id
+		LEFT join t_sys_dict t3  on t1.people = t3.id
+		LEFT JOIN t_sys_dict t4  on t1.political = t4.id
+		LEFT join t_sys_dict t5  on t1.education = t5.id
+		LEFT join t_sys_dict t6  on t1.marriage = t6.id
+        <where>
+            <if test="id != null  " >and t1.id =#{id,jdbcType=BIGINT}</if>
+            <if test="realName != null and realName != '' " >and t1.real_name =#{realName,jdbcType=VARCHAR}</if>
+            <if test="cardId != null and cardId != '' " >and t1.card_id =#{cardId,jdbcType=VARCHAR}</if>
+            <if test="sex != null  " >and t1.sex =#{sex,jdbcType=BIGINT}</if>
+            <if test="hjdz != null and hjdz != '' " >and t1.hjdz =#{hjdz,jdbcType=VARCHAR}</if>
+            <if test="relationOwner != null and relationOwner != '' " >and t1.relation_owner =#{relationOwner,jdbcType=VARCHAR}</if>
+            <if test="mobile != null and mobile != '' " >and t1.mobile =#{mobile,jdbcType=VARCHAR}</if>
+
+            <if test="reason != null and reason != '' " >and t1.reason =#{reason,jdbcType=VARCHAR}</if>
+			<if test="personType != null and personType !=''  " >and specialperson =#{personType,jdbcType=VARCHAR}</if>
+            <if test="people != null  " >and t1.people =#{people,jdbcType=BIGINT}</if>
+            <if test="political != null  " >and t1.political =#{political,jdbcType=BIGINT}</if>
+            <if test="education != null  " >and t1.education =#{education,jdbcType=BIGINT}</if>
+            <if test="marriage != null " >and t1.marriage =#{marriage,jdbcType=BIGINT}</if>
+            <if test="worklocation != null and worklocation != '' " >and t1.worklocation =#{worklocation,jdbcType=VARCHAR}</if>
+			<if test="picture != null  " >and picture =#{picture,jdbcType=BIGINT}</if>
+			<if test="houseId != null  " >and house_id =#{houseId,jdbcType=BIGINT}</if>
+			<if test="isHouseholder != null  " >and isHouseholder =#{isHouseholder,jdbcType=INTEGER}</if>
+			<if test="certificateType != null  " >and certificate_type =#{certificateType,jdbcType=INTEGER}</if>
+			<if test="certificatePicture != null and certificatePicture != '' " >and certificate_picture =#{certificatePicture,jdbcType=VARCHAR}</if>
+			<if test="isStay != null  " >and isStay =#{isStay,jdbcType=INTEGER}</if>
+        </where>
+	</select>
+
+	<select id="gethouseByPage" parameterType="com.bit.sc.module.house.vo.RealPersonVO" resultType="com.bit.sc.module.house.vo.RealPersonHouseVO">
+		SELECT t1.*,t3.*,d1.`value` as value1,d2.`value` as value2,d3.`value` as value3,d4.`value` as value4,d5.`value` as value5 ,
+        d6.`value` as value6,d7.`value` as value7,d8.`value` as value8,d9.`value` as value9
+        FROM t_ga_real_person t1
+		LEFT JOIN t_ga_house_rel_realperson t2
+		on t1.id = t2.realperson_id
+		LEFT JOIN t_ga_house t3
+		on t2.house_id = t3.id
+		INNER JOIN t_sys_dict d1
+		on t3.house_usage=d1.id
+		INNER JOIN t_sys_dict d2
+		on t3.house_type=d2.id
+		INNER JOIN t_sys_dict d3
+		on t3.house_character=d3.id
+		INNER JOIN t_sys_dict d4
+		on t3.house_usage_purpose=d4.id
+		INNER JOIN t_sys_dict d5
+		on t3.property_type=d5.id
+        INNER JOIN t_sys_dict d6
+        on t1.people = d6.id
+        INNER JOIN t_sys_dict d7
+        on t1.political = d7.id
+        INNER JOIN t_sys_dict d8
+        on t1.education = d8.id
+        INNER JOIN t_sys_dict d9
+        on t1.marriage = d9.id
+        <where>
+            <if test="id != null  " >and t1.id =#{id,jdbcType=BIGINT}</if>
+            <if test="realName != null and realName != '' " >and t1.real_name =#{realName,jdbcType=VARCHAR}</if>
+            <if test="cardId != null and cardId != '' " >and t1.card_id =#{cardId,jdbcType=VARCHAR}</if>
+            <if test="sex != null  " >and t1.sex =#{sex,jdbcType=BIGINT}</if>
+            <if test="hjdz != null and hjdz != '' " >and t1.hjdz =#{hjdz,jdbcType=VARCHAR}</if>
+            <if test="relationOwner != null and relationOwner != '' " >and t1.relation_owner =#{relationOwner,jdbcType=VARCHAR}</if>
+            <if test="mobile != null and mobile != '' " >and t1.mobile =#{mobile,jdbcType=VARCHAR}</if>
+
+            <if test="reason != null and reason != '' " >and t1.reason =#{reason,jdbcType=VARCHAR}</if>
+			<if test="personType != null and personType !=''  " >and specialperson =#{personType,jdbcType=VARCHAR}</if>
+            <if test="people != null  " >and t1.people =#{people,jdbcType=BIGINT}</if>
+            <if test="political != null  " >and t1.political =#{political,jdbcType=BIGINT}</if>
+            <if test="education != null  " >and t1.education =#{education,jdbcType=BIGINT}</if>
+            <if test="marriage != null " >and t1.marriage =#{marriage,jdbcType=BIGINT}</if>
+            <if test="worklocation != null and worklocation != '' " >and t1.worklocation =#{worklocation,jdbcType=VARCHAR}</if>
+			<if test="picture != null  " >and picture =#{picture,jdbcType=BIGINT}</if>
+			<if test="houseId != null  " >and house_id =#{houseId,jdbcType=BIGINT}</if>
+			<if test="isHouseholder != null  " >and isHouseholder =#{isHouseholder,jdbcType=INTEGER}</if>
+			<if test="certificateType != null  " >and certificate_type =#{certificateType,jdbcType=INTEGER}</if>
+			<if test="certificatePicture != null and certificatePicture != '' " >and certificate_picture =#{certificatePicture,jdbcType=VARCHAR}</if>
+			<if test="isStay != null  " >and isStay =#{isStay,jdbcType=INTEGER}</if>
+        </where>
+	</select>
+
+	<select id="findByHouseId" parameterType="long" resultType="com.bit.sc.module.house.pojo.RealPerson">
+		SELECT <include refid="RealPerson_columns"/>
+		FROM t_ga_real_person
+		<where>
+			<if test="houseId != null  " >and house_id =#{houseId,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+
+</mapper>

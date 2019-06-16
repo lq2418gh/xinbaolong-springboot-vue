@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.ApplyVersionMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ApplyVersion_columns">
+	    <![CDATA[
+			id as id,
+			application_id as applicationId,
+			application_version as applicationVersion,
+			is_able as is_able,
+			is_force_update as is_force_update,
+		
+			building_note as building_note,
+			publish_time as publish_time,
+			create_time as create_time,
+			create_user_id as create_user_id,
+			update_time as update_time,
+		
+			update_user_id as update_user_id,
+			apply_os as apply_os,
+			download_url as download_url
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.ApplyVersion" id="applyVersionMap">
+		<id column="id" property="id"/>
+	    <result column="application_id" property="applicationId"/>
+	    <result column="application_version" property="applyVersion"/>
+	    <result column="is_able" property="isAble"/>
+	    <result column="is_force_update" property="isForceUpdate"/>
+	    <result column="building_note" property="buildingNote"/>
+	    <result column="publish_time" property="publishTime"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+	    <result column="apply_os" property="applyOs"/>
+	    <result column="download_url" property="downloadUrl"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="applyVersionMap" parameterType="com.bit.sc.module.sys.vo.ApplyVersionVO">
+		select <include refid="ApplyVersion_columns" /> from t_sys_apply_version
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationId != null " >and application_id =#{applicationId,jdbcType=BIGINT}</if>
+			<if test="applicationVersion != null " >and application_version =#{applicationVersion,jdbcType=VARCHAR}</if>
+			<if test="isAble != null " >and is_able =#{isAble,jdbcType=TINYINT}</if>
+			<if test="isForceUpdate != null " >and is_force_update =#{isForceUpdate,jdbcType=TINYINT}</if>
+			<if test="buildingNote != null " >and building_note =#{buildingNote,jdbcType=LONGVARCHAR}</if>
+			<if test="createUserId != null " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="applyOs != null " >and apply_os =#{applyOs,jdbcType=VARCHAR}</if>
+			<if test="downloadUrl != null " >and download_url =#{downloadUrl,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="applyVersionMap" parameterType="String">
+		select <include refid="ApplyVersion_columns" /> from t_sys_apply_version
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="applyVersionMap" parameterType="com.bit.sc.module.sys.pojo.ApplyVersion">
+		select <include refid="ApplyVersion_columns" /> 
+		from t_sys_apply_version
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<select id="findVersionListByCondition" resultType="com.bit.sc.module.sys.vo.ApplyVersionVO" parameterType="com.bit.sc.module.sys.vo.ApplyVersionVO" >
+
+		SELECT
+			tsv.id,
+			tsv.apply_os,
+			tsd.`value` applyOsName ,
+			tsa.application_name applicationName,
+			tsv.application_version applicationVersion,
+			tsv.publish_time
+        FROM
+            t_sys_apply_version tsv,
+			t_sys_apply tsa,
+			t_sys_dict tsd
+      WHERE
+	       tsa.id = tsv.application_id
+           AND tsa.is_delete = 0
+           AND tsd.dict_code = tsv.apply_os
+           order by tsa.application_code,tsv.id
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.ApplyVersion">
+	insert INTO t_sys_apply_version (
+		application_id ,
+		application_version ,
+		is_able ,
+		is_force_update ,
+		building_note ,
+		publish_time ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		update_user_id ,
+		apply_os ,
+		download_url 
+	) VALUES (
+		#{applicationId,jdbcType=BIGINT},
+		#{applicationVersion,jdbcType=VARCHAR},
+		#{isAble,jdbcType=TINYINT},
+		#{isForceUpdate,jdbcType=TINYINT},
+		#{buildingNote,jdbcType=LONGVARCHAR},
+		#{publishTime,jdbcType=TIMESTAMP},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{updateUserId,jdbcType=TIMESTAMP},
+		#{applyOs,jdbcType=VARCHAR},
+		#{downloadUrl,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.ApplyVersion">
+		update t_sys_apply_version
+		<set>
+		<if test="applicationId != null">
+			application_id =#{applicationId,jdbcType=BIGINT},
+		</if>
+		<if test="applicationVersion != null">
+			application_version =#{applicationVersion,jdbcType=VARCHAR},
+		</if>
+		<if test="is_able != null">
+		 is_able =#{isAble,jdbcType=TINYINT},
+		</if>
+		<if test="is_force_update != null">
+		 is_force_update =#{isForceUpdate,jdbcType=TINYINT},
+		</if>
+		<if test="building_note != null">
+		 building_note =#{buildingNote,jdbcType=LONGVARCHAR},
+		</if>
+		<if test="publish_time != null">
+		 publish_time =#{publishTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="create_time != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="create_user_id != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="update_time != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="update_user_id != null">
+		 update_user_id =#{updateUserId,jdbcType=TIMESTAMP},
+		</if>
+		<if test="apply_os != null">
+		 apply_os =#{applyOs,jdbcType=VARCHAR},
+		</if>
+		<if test="download_url != null">
+		 download_url =#{downloadUrl,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.ApplyVersion">
+		delete from t_sys_apply_version 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_apply_version
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+</mapper>

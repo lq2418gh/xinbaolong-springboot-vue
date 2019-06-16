@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.AddressContactMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="AddressContact_columns">
+	    <![CDATA[
+			id as id,
+			ga_contactman as ga_contactman,
+			ga_contactmobile as ga_contactmobile,
+			sq_contactman as sq_contactman,
+			sq_contactmobile as sq_contactmobile,
+			wy_contactman as wy_contactman,
+			wy_contactmobile as wy_contactmobile,
+			address_id as address_id
+
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.AddressContact" id="addressMap">
+		<id column="id" property="id"/>
+	    <result column="ga_contactman" property="gaContactman"/>
+	    <result column="ga_contactmobile" property="gaContactmobile"/>
+	    <result column="sq_contactman" property="sqContactman"/>
+	    <result column="sq_contactmobile" property="sqContactmobile"/>
+	    <result column="wy_contactman" property="wyContactman"/>
+		<result column="wy_contactmobile" property="wyContactmobile"/>
+		<result column="address_id" property="addressId"/>
+
+	</resultMap>
+
+
+
+
+
+
+
+	<select id="findById" resultMap="addressMap" parameterType="long">
+		SELECT <include refid="AddressContact_columns"/>
+		FROM t_sys_address_contact
+		WHERE id = #{id,jdbcType=VARCHAR}
+
+
+	</select>
+
+
+	<select id="findByAddressId" resultMap="addressMap" parameterType="long">
+		SELECT <include refid="AddressContact_columns"/>
+		FROM t_sys_address_contact
+		WHERE address_id = #{addressId,jdbcType=VARCHAR}
+
+
+	</select>
+
+
+
+
+	<!-- 添加一条记录 -->
+	<insert id="addressContactAdd" parameterType="com.bit.sc.module.sys.pojo.Address" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+			insert INTO t_sys_address_contact (
+				ga_contactman,
+				ga_contactmobile,
+				sq_contactman,
+				sq_contactmobile,
+				wy_contactman,
+				wy_contactmobile,
+				address_id
+			) VALUES (
+				#{gaContactman,jdbcType=VARCHAR},
+				#{gaContactmobile,jdbcType=VARCHAR},
+				#{sqContactman,jdbcType=VARCHAR},
+				#{sqContactmobile,jdbcType=VARCHAR},
+				#{wyContactman,jdbcType=VARCHAR},
+				#{wyContactmobile,jdbcType=VARCHAR},
+				#{addressId,jdbcType=BIGINT}
+			)
+	</insert>
+
+	<!-- 修改一条记录 -->
+	<update id="addressContactModify" parameterType="com.bit.sc.module.sys.pojo.Address">
+		update t_sys_address_contact
+		<set>
+			<if test="gaContactman != null and gaContactman != '' ">
+				ga_contactman =#{gaContactman,jdbcType=VARCHAR},
+			</if>
+			<if test="gaContactmobile != null and gaContactmobile !=''">
+				ga_contactmobile =#{gaContactmobile,jdbcType=VARCHAR},
+			</if>
+			<if test="sqContactman != null and sqContactman !=''">
+				sq_contactman =#{sqContactman,jdbcType=TINYINT},
+			</if>
+			<if test="sqContactmobile != null and sqContactmobile!=''">
+				sq_contactmobile =#{sqContactmobile,jdbcType=BIGINT},
+			</if>
+			<if test="wyContactman != null and wyContactman !=''">
+				wy_contactman =#{wyContactman,jdbcType=VARCHAR},
+			</if>
+			<if test="wyContactmobile != null and wyContactmobile !=''">
+				wy_contactmobile =#{wyContactmobile,jdbcType=VARCHAR},
+			</if>
+			<if test="addressId != null ">
+				address_id =#{addressId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where
+		id = #{id,jdbcType=BIGINT}
+	</update>
+
+    <!-- 删除一条记录 -->
+	<delete id="addressContactDelete" parameterType="com.bit.sc.module.sys.pojo.Address">
+		delete from t_sys_address_contact where id = #{id,jdbcType=BIGINT}
+	</delete>
+
+
+</mapper>

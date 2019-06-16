@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.ResidentRelAddressMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ResidentRelAddress_columns">
+	    <![CDATA[
+			id as id,
+			address_code as address_code,
+			resident_id as resident_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.ResidentRelAddress" id="residentRelAddressMap">
+		<id column="id" property="id"/>
+	    <result column="address_code" property="addressCode"/>
+	    <result column="resident_id" property="residentId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="residentRelAddressMap" parameterType="com.bit.sc.module.sys.vo.ResidentRelAddressVO">
+		select <include refid="ResidentRelAddress_columns" /> from t_resident_rel_address
+		<where>
+			<if test="id != null  " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="addressCode != null  " >and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+			<if test="residentId != null  " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="residentRelAddressMap" parameterType="String">
+		select <include refid="ResidentRelAddress_columns" /> from t_resident_rel_address
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="residentRelAddressMap" parameterType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+		select <include refid="ResidentRelAddress_columns" />
+		from t_resident_rel_address
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+	insert INTO t_resident_rel_address (
+		address_code ,
+		resident_id 
+	) VALUES (
+		#{addressCode,jdbcType=VARCHAR},
+		#{residentId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+		update t_resident_rel_address
+		<set>
+		<if test="addressCode != null">
+			address_code =#{addressCode,jdbcType=VARCHAR},
+		</if>
+		<if test="residentId != null">
+		 resident_id =#{residentId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+		delete from t_resident_rel_address 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_resident_rel_address where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	<!-- 跟据addressCode模糊删除 -->
+    <delete id="deleteByLikeAddressCode">
+		delete from t_resident_rel_address where address_code like "%"#{addressCode}"%"
+	</delete>
+    <insert id="batchAdd" parameterType="java.util.List">
+        insert INTO t_resident_rel_address (
+		address_code ,
+		resident_id
+	) VALUES
+	    <foreach collection="residentRelAddresss" index="index" item="item" separator=",">
+            (
+            #{item.addressCode,jdbcType=VARCHAR},
+            #{item.residentId,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getDataByColumns" parameterType="long" resultType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+        SELECT
+        <include refid="ResidentRelAddress_columns"/>
+        FROM t_resident_rel_address
+        WHERE resident_id = #{residentId}
+    </select>
+
+	<select id="findByRelAddress" parameterType="com.bit.sc.module.sys.pojo.ResidentRelAddress" resultType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+		SELECT
+		<include refid="ResidentRelAddress_columns"/>
+		FROM t_resident_rel_address
+		<where>
+			<if test="addressCode != null  " >and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+			<if test="residentId != null  " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+			<if test="communityCode != null  " >and address_code like #{communityCode,jdbcType=BIGINT}</if>
+		</where>
+
+	</select>
+
+
+
+</mapper>

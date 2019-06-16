@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.ResourceMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Resource_columns">
+	    <![CDATA[
+			id as id,
+			application_id as application_id,
+			resource_name as resource_name,
+			resource_icon as resource_icon,
+			resource_level as resource_level,
+		
+			resource_url as resource_url,
+			resource_code as resource_code,
+			order_value as order_value,
+			is_display as is_display,
+			pid as pid,
+		
+			create_time as create_time,
+			create_user_id as create_user_id,
+			update_time as update_time,
+			update_user_id as update_user_id,
+			update_user_name as update_user_name,
+			create_user_name as create_user_name,
+			application_name as application_name,
+			type as type
+	    ]]>
+	</sql>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Resource_User_Apply_columns">
+	    <![CDATA[
+			r.id as id,
+			r.application_id as application_id,
+			r.menu_name as menu_name,
+			r.menu_icon as menu_icon,
+			r.menu_level as menu_level,
+
+
+			r.menu_url as menu_url,
+			r.menu_code as menu_code,
+			r.order_value as order_value,
+			r.is_display as is_display,
+			r.create_time as create_time,
+
+			r.create_user_id as create_user_id,
+			r.update_time as update_time,
+			r.update_user_id as update_user_id,
+			u2.real_name as update_user_name,
+			u.real_name as create_user_name,
+			sa.application_name as application_name,
+			r.type as type,
+			r.pid as pid
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.Resource" id="resourceMap">
+		<id column="id" property="id"/>
+	    <result column="application_id" property="applicationId"/>
+	    <result column="resource_name" property="resourceName"/>
+	    <result column="resource_icon" property="resourceIcon"/>
+	    <result column="resource_level" property="resourceLevel"/>
+	    <result column="resource_url" property="resourceUrl"/>
+	    <result column="resource_code" property="resourceCode"/>
+	    <result column="order_value" property="orderValue"/>
+	    <result column="is_display" property="isDisplay"/>
+	    <result column="pid" property="pid"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+		<result column="update_user_name" property="updateUserName"/>
+		<result column="create_user_name" property="createUserName"/>
+		<result column="application_name" property="applicationName"/>
+	    <result column="type" property="type"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="resourceMap" parameterType="com.bit.sc.module.sys.vo.ResourceVO">
+		select <include refid="Resource_columns" />
+		from t_sys_resource r
+		LEFT JOIN t_sys_apply sa ON sa.id=r.application_id
+		LEFT JOIN t_sys_manage_user u ON r.create_user_id = u.id
+		LEFT JOIN t_sys_manage_user u2 ON r.update_user_id = u2.id
+		<where>
+			<if test="id != null  " >and r.id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationId != null  " >and r.application_id =#{applicationId,jdbcType=BIGINT}</if>
+			<if test="resourceName != null and resourceName != '' " >and r.resource_name =like "%"#{resourceName,jdbcType=VARCHAR} "%"</if>
+			<if test="resourceIcon != null and resourceIcon != '' " >and r.resource_icon =#{resourceIcon,jdbcType=VARCHAR}</if>
+			<if test="resourceLevel != null " >and r.resource_level =#{resourceLevel,jdbcType=INTEGER}</if>
+			<if test="resourceUrl != null and resourceUrl != '' " >and r.resource_url =#{resourceUrl,jdbcType=VARCHAR}</if>
+			<if test="resourceCode != null and resourceCode != '' " >and r.resource_code =#{resourceCode,jdbcType=VARCHAR}</if>
+			<if test="orderValue != null' " >and r.order_value =#{orderValue,jdbcType=INTEGER}</if>
+			<if test="isDisplay != null " >and r.is_display =#{isDisplay,jdbcType=TINYINT}</if>
+			<if test="pid != null " >and r.pid =#{pid,jdbcType=BIGINT}</if>
+			<if test="createUserId != null  " >and r.create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null" >and r.update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+			<if test="type != null " >and r.type =#{type,jdbcType=INTEGER}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="resourceMap" parameterType="String">
+		select <include refid="Resource_columns" /> from t_sys_resource
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="resourceMap" parameterType="com.bit.sc.module.sys.pojo.Resource">
+		select <include refid="Resource_columns" /> 
+		from t_sys_resource
+		where id =#{id,jdbcType=BIGINT}
+	</select>
+	<select id="resourceListByParam" resultType="com.bit.sc.module.sys.pojo.Resource">
+		SELECT t.*
+		FROM
+		(
+			SELECT DISTINCT(function_id) FROM t_sys_role_rel_permission
+			WHERE 1 = 1
+				AND role_id in
+					<foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+						#{roleId}
+					</foreach>
+				AND permission_type = 1
+		) srl
+		LEFT JOIN (
+			SELECT t.*,ta.application_name,u.real_name  create_user_name,u2.real_name  update_user_name
+			FROM t_sys_resource t
+			LEFT JOIN  t_sys_apply ta  ON ta.id=t.application_id
+			LEFT JOIN t_sys_manage_user u ON t.create_user_id = u.id
+			LEFT JOIN t_sys_manage_user u2 ON t.update_user_id = u2.id
+			WHERE 1 = 1
+				AND ta.is_delete=0
+				<if test="type!=null">
+					AND t.type=#{type}
+				</if>
+				<if test="applicationCode != null and applicationCode !=''">
+					AND ta.application_code =#{applicationCode}
+				</if>
+		) t ON t.id = srl.function_id
+		<where>
+			<if test="isDisplay != null ">
+				AND t.is_display =#{isDisplay}
+			</if>
+		</where>
+		order by t.order_value
+	</select>
+	<!-- 查询统计数 通过menuCode -->
+	<select id="findCountByResourceCode" resultType="java.lang.Integer" parameterType="String">
+		select count(1) from  t_sys_resource
+		<where>
+			1=1
+			<if test="_parameter != null and _parameter !=''  ">
+				and resource_code =#{_parameter}
+			</if>
+		</where>
+	</select>
+	<select id="findByApplication" resultType="com.bit.sc.module.sys.pojo.Resource">
+		select t.*  from t_sys_resource t LEFT JOIN  t_sys_apply ta  ON ta.id=t.application_id
+		<where>
+			t.is_display=1
+			<if test="_parameter != null and _parameter !=''  ">
+				and ta.application_code =#{_parameter}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.Resource">
+	insert INTO t_sys_resource (
+		application_id ,
+		resource_name ,
+		resource_icon ,
+		resource_level ,
+		resource_url ,
+		resource_code ,
+		order_value ,
+		is_display ,
+		pid ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		update_user_id ,
+		type 
+	) VALUES (
+		#{applicationId,jdbcType=BIGINT},
+		#{resourceName,jdbcType=VARCHAR},
+		#{resourceIcon,jdbcType=VARCHAR},
+		#{resourceLevel,jdbcType=INTEGER},
+		#{resourceUrl,jdbcType=VARCHAR},
+		#{resourceCode,jdbcType=VARCHAR},
+		#{orderValue,jdbcType=INTEGER},
+		#{isDisplay,jdbcType=TINYINT},
+		#{pid,jdbcType=BIGINT},
+		#{createTime,jdbcType=DATE},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=DATE},
+		#{updateUserId,jdbcType=BIGINT},
+		#{type,jdbcType=INTEGER}
+	)
+	</insert>
+	<insert id="batchAdd" parameterType="list">
+
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.Resource">
+		update t_sys_resource
+		<set>
+		<if test="applicationId != null">
+		 application_id =#{applicationId,jdbcType=BIGINT},
+		</if>
+		<if test="resourceName != null">
+		 resource_name =#{resourceName,jdbcType=VARCHAR},
+		</if>
+		<if test="resourceIcon != null">
+		 resource_icon =#{resourceIcon,jdbcType=VARCHAR},
+		</if>
+		<if test="resourceLevel != null">
+		 resource_level =#{resourceLevel,jdbcType=INTEGER},
+		</if>
+		<if test="resourceUrl != null">
+		 resource_url =#{resourceUrl,jdbcType=VARCHAR},
+		</if>
+		<if test="resourceCode != null">
+		 resource_code =#{resourceCode,jdbcType=VARCHAR},
+		</if>
+		<if test="orderValue != null">
+		 order_value =#{orderValue,jdbcType=INTEGER},
+		</if>
+		<if test="isDisplay != null">
+		 is_display =#{isDisplay,jdbcType=TINYINT},
+		</if>
+		<if test="pid != null">
+		 pid =#{pid,jdbcType=BIGINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=DATE},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=DATE},
+		</if>
+		<if test="updateUserId != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT},
+		</if>
+		<if test="type != null">
+		 type =#{type,jdbcType=INTEGER}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.Resource">
+		delete from t_sys_resource
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_sys_menu where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

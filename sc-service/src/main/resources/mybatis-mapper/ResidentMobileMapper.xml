@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.resident.dao.ResidentMobileMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ResidentMobile_columns">
+	    <![CDATA[
+			id as id,
+			resident_id as resident_id,
+			phone as phone,
+			status as status,
+			registration_id as registration_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.resident.pojo.ResidentMobile" id="residentMobileMap">
+		<id column="id" property="id"/>
+	    <result column="resident_id" property="residentId"/>
+	    <result column="phone" property="phone"/>
+	    <result column="status" property="status"/>
+	    <result column="registration_id" property="registrationId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="residentMobileMap" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+		select <include refid="ResidentMobile_columns" /> from t_resident_mobile
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="residentId != null and residentId != '' " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+			<if test="phone != null and phone != '' " >and phone =#{phone,jdbcType=BIGINT}</if>
+			<if test="status != null and status != '' " >and status =#{status,jdbcType=TINYINT}</if>
+			<if test="registrationId != null and registrationId != '' " >and registration_id =#{registrationId,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="residentMobileMap" parameterType="String">
+		select <include refid="ResidentMobile_columns" /> from t_resident_mobile
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="residentMobileMap" parameterType="com.bit.sc.module.resident.pojo.ResidentMobile">
+		select <include refid="ResidentMobile_columns" /> 
+		from t_resident_mobile
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.resident.pojo.ResidentMobile">
+	insert INTO t_resident_mobile (
+		resident_id ,
+		phone ,
+		status ,
+		registration_id 
+	) VALUES (
+		#{residentId,jdbcType=BIGINT},
+		#{phone,jdbcType=BIGINT},
+		#{status,jdbcType=TINYINT},
+		#{registrationId,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.resident.pojo.ResidentMobile">
+		update t_resident_mobile
+		<set>
+		<if test="residentId != null">
+		 resident_id =#{residentId,jdbcType=BIGINT},
+		</if>
+		<if test="phone != null">
+		 phone =#{phone,jdbcType=BIGINT},
+		</if>
+		<if test="status != null">
+		 status =#{status,jdbcType=TINYINT},
+		</if>
+		<if test="registrationId != null">
+		 registration_id =#{registrationId,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.resident.pojo.ResidentMobile">
+		delete from t_resident_mobile 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_resident_mobile
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+	<update id="updateInfoByResidentId" parameterType="com.bit.sc.module.resident.pojo.ResidentMobile">
+		UPDATE t_resident_mobile
+		<set>
+
+			<if test="phone != null">
+				phone =#{phone,jdbcType=BIGINT},
+			</if>
+			<if test="status != null">
+				status =#{status,jdbcType=TINYINT},
+			</if>
+			<if test="registrationId != null">
+				registration_id =#{registrationId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where resident_id = #{residentId,jdbcType=BIGINT}
+
+	</update>
+
+	<delete id="deleteByIdAndMobile" >
+		DELETE FROM t_resident_mobile WHERE resident_id = #{residentId} and phone =#{phone}
+	</delete>
+
+	<select id="findByResidentId" parameterType="long" resultMap="residentMobileMap">
+		SELECT
+		<include refid="ResidentMobile_columns"/>
+		FROM t_resident_mobile WHERE resident_id = #{residentId}
+	</select>
+
+	<!--根据参数查询-->
+   <select id="findByParam" resultType="com.bit.sc.module.resident.vo.ResidentMobileVO" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+	   SELECT r.id,r.role_name,r.application_id,r.create_user_id,r.create_time,r.update_user_id,r.update_time,
+	   a.id,a.is_delete,a.application_code,a.application_name,a.application_type,a.create_user_id,a.create_time,a.update_user_id,a.update_time
+	   FROM t_resident_rel_role rr,t_sys_apply a,t_sys_role r
+	   <where>
+		   and rr.role_id =r.id
+		   and r.application_id=a.id
+		   and a.is_delete=0
+		   and r.is_delete=0
+		   <if test="applicationCode != null and applicationCode != '' ">and a.application_code = #{applicationCode,jdbcType=VARCHAR}</if>
+		   <if test="residentId != null  " >and rr.resident_id = #{residentId,jdbcType=BIGINT}</if>
+	   </where>
+	</select>
+
+	<!--根据用户身份证查询手机号激活状态-->
+	<select id="findStatusByCardId" resultType="com.bit.sc.module.resident.vo.ResidentMobileVO" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+		SELECT rm.id,rm.`status`,r.`password`,r.real_name,r.card_id,r.id as residentId
+		FROM t_resident_mobile rm
+		LEFT JOIN t_resident r on rm.resident_id=r.id
+		<where>
+			<if test="cardId != null and cardId != '' " >and r.card_id =#{cardId,jdbcType=VARCHAR}</if>
+			<if test="phone != null and phone != '' " >and rm.phone =#{phone,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+
+	<!--根据手机号查询角色id-->
+	<select id="findRoleIdByPhone" resultType="com.bit.sc.module.resident.pojo.ResidentRelRole" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+		SELECT rr.role_id
+		FROM t_resident_rel_role rr
+		LEFT JOIN t_resident_mobile rm ON rr.resident_id = rm.resident_id
+		<where>
+			<if test="phone != null and phone != '' " >and rm.phone =#{phone,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+
+	<select id="findByAppCode" resultType="com.bit.sc.module.sys.pojo.Role" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+		SELECT r.id
+		FROM t_sys_role r
+		LEFT JOIN t_sys_apply a ON r.application_id  = a.id
+		<where>
+			<if test="applicationCode != null and applicationCode != '' " >and a.application_code = #{applicationCode,jdbcType=VARCHAR}</if>
+		</where>
+
+	</select>
+
+	<!--通过手机号查询addressCode-->
+	<select id="findAddressByPhone" resultType="com.bit.sc.module.sys.pojo.Address" parameterType="com.bit.sc.module.resident.vo.ResidentMobileVO">
+		select ra.address_code
+        from t_sys_address a
+        LEFT JOIN t_resident_rel_address ra on a.address_code = ra.address_code
+        WHERE ra.resident_id = (SELECT resident_id FROM t_resident_mobile WHERE phone = #{phone,jdbcType=BIGINT})
+
+	</select>
+
+	<select id="checkPhone" resultType="integer" parameterType="string">
+		SELECT COUNT(1) FROM t_resident_mobile
+		<where>
+			<if test="phone !=null">and phone = #{phone}</if>
+		</where>
+	</select>
+</mapper>

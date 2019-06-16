@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.RoleRelPermissionMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="RoleRelPermission_columns">
+	    <![CDATA[
+			id as id,
+			role_id as role_id,
+			function_id as function_id,
+			permission_type as permission_type
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.RoleRelPermission" id="roleRelPermissionMap">
+		<id column="id" property="id"/>
+	    <result column="role_id" property="roleId"/>
+	    <result column="function_id" property="functionId"/>
+	    <result column="permission_type" property="permissionType"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="roleRelPermissionMap" parameterType="com.bit.sc.module.sys.vo.RoleRelPermissionVO">
+		select <include refid="RoleRelPermission_columns" /> from t_sys_role_rel_permission
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="roleId != null " >and role_id =#{roleId,jdbcType=BIGINT}</if>
+			<if test="functionId != null " >and function_id =#{functionId,jdbcType=BIGINT}</if>
+			<if test="permissionType != null " >and permission_type =#{permissionType,jdbcType=TINYINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="roleRelPermissionMap" parameterType="String">
+		select <include refid="RoleRelPermission_columns" /> from t_sys_role_rel_permission
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="roleRelPermissionMap" parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+		select <include refid="RoleRelPermission_columns" /> 
+		from t_sys_role_rel_permission
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<select id="batchFindRole" resultMap="roleRelPermissionMap"  parameterType="List">
+		select DISTINCT (t.function_id) from  t_sys_role_rel_permission t
+
+		where t.role_id in
+		<foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+			#{roleId}
+		</foreach>
+	</select>
+
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+	insert INTO t_sys_role_rel_permission (
+		role_id ,
+		function_id ,
+		permission_type 
+	) VALUES (
+		#{roleId,jdbcType=BIGINT},
+		#{functionId,jdbcType=BIGINT},
+		#{permissionType,jdbcType=TINYINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+		update t_sys_role_rel_permission
+		<set>
+		<if test="role_id != null">
+		 role_id =#{roleId,jdbcType=BIGINT},
+		</if>
+		<if test="function_id != null">
+		 function_id =#{functionId,jdbcType=BIGINT},
+		</if>
+		<if test="permission_type != null">
+		 permission_type =#{permissionType,jdbcType=TINYINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+		delete from t_sys_role_rel_permission 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_role_rel_permission
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+	<!-- 根据菜单 删除权限  type 是1 的 -->
+	<delete id="deleteByFunction"  parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+		delete from t_sys_role_rel_permission where function_id =#{functionId} and permission_type=#{permissionType}
+	</delete>
+
+
+	<!--<select id="queryFunctionByPage" parameterType="com.bit.sc.module.sys.vo.RoleRelPermissionVO" statementType="STATEMENT" resultType="com.bit.sc.module.sys.vo.RolePermissionMenuVO">-->
+		<!--SELECT ${columnName} FROM-->
+		<!--(-->
+			<!--SELECT * FROM t_sys_role_rel_permission-->
+			<!--WHERE permission_type = ${permissionType}-->
+		<!--) t1-->
+		<!--, ${tableName} t2-->
+		<!--WHERE t1.function_id = t2.id-->
+
+		<!---->
+	<!--</select>-->
+
+    <select id="queryMenuByPage" parameterType="com.bit.sc.module.sys.vo.RoleRelPermissionVO" resultType="com.bit.sc.module.sys.vo.RolePermissionMenuVO">
+        SELECT t2.menu_name FROM
+        (
+          SELECT * FROM t_sys_role_rel_permission
+          WHERE permission_type=#{permissionType}
+        ) t1
+        LEFT JOIN t_sys_menu t2
+        on t1.function_id = t2.id
+    </select>
+
+    <select id="queryFunctionByPage" parameterType="com.bit.sc.module.sys.vo.RoleRelPermissionVO" resultType="com.bit.sc.module.sys.vo.RolePermissionMenuVO">
+        SELECT t2.function_name FROM
+        (
+        SELECT * FROM t_sys_role_rel_permission
+        WHERE permission_type=#{permissionType}
+        ) t1
+        LEFT JOIN t_sys_function t2
+        on t1.function_id = t2.id
+    </select>
+
+
+    <select id="listAllFunction" resultMap="roleRelPermissionMap" parameterType="com.bit.sc.module.sys.pojo.RoleRelPermission">
+        select DISTINCT <include refid="RoleRelPermission_columns" /> from t_sys_role_rel_permission
+        <where>
+            <if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+            <if test="roleId != null " >and role_id =#{roleId,jdbcType=BIGINT}</if>
+            <if test="functionId != null " >and function_id =#{functionId,jdbcType=BIGINT}</if>
+            <if test="permissionType != null " >and permission_type =#{permissionType,jdbcType=TINYINT}</if>
+        </where>
+        order by function_id asc
+
+    </select>
+
+    <insert id="batchAdd" parameterType="list">
+        insert INTO t_sys_role_rel_permission (
+		role_id ,
+		function_id ,
+		permission_type
+	) VALUES
+	<foreach collection="list" index="index" item="item" separator=",">
+        ( #{item.roleId,jdbcType=BIGINT},
+        #{item.functionId,jdbcType=BIGINT},
+        #{item.permissionType,jdbcType=TINYINT}
+        )
+    </foreach>
+
+
+    </insert>
+
+
+    <delete id="deleteByRoleId" parameterType="long">
+        delete from t_sys_role_rel_permission
+        where
+        role_id = #{roleId,jdbcType=BIGINT}
+
+    </delete>
+
+
+</mapper>

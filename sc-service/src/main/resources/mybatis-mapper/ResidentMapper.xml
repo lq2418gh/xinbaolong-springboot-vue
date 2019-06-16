@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.resident.dao.ResidentMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Resident_columns">
+	    <![CDATA[
+			id as id,
+			user_name as user_name,
+			real_name as real_name,
+			password as password,
+			card_id as card_id,
+			card_type as card_type,
+
+			sex as sex,
+			create_time as create_time,
+			hjdz as hjdz,
+
+			person_type as person_type,
+			people as people,
+			education as education,
+			political as political,
+			marriage as marriage,
+
+			image_id as image_id,
+			status as status,
+			member_id as member_id,
+			community_code as community_code,
+			birthday as birthday,
+			mobile as mobile,
+			org_id as org_id
+
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.resident.pojo.Resident" id="ResidentMap">
+		<id column="id" property="id"/>
+	    <result column="user_name" property="userName"/>
+	    <result column="real_name" property="realName"/>
+	    <result column="password" property="password"/>
+	    <result column="card_id" property="cardId"/>
+		<result column="card_type" property="cardType"/>
+		<result column="sex" property="sex"/>
+		<result column="create_time" property="createTime"/>
+		<result column="hjdz" property="hjdz"/>
+		<result column="person_type" property="personType"/>
+		<result column="people" property="people"/>
+		<result column="education" property="education"/>
+		<result column="political" property="political"/>
+		<result column="marriage" property="marriage"/>
+		<result column="image_id" property="imageId"/>
+        <result column="status" property="status"/>
+        <result column="member_id" property="memberId"/>
+		<result column="community_code" property="communityCode"/>
+		<result column="birthday" property="birthday"/>
+		<result column="mobile" property="mobile"/>
+		<result column="orgId" property="orgId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="ResidentMap" parameterType="com.bit.sc.module.resident.vo.ResidentVO">
+		select <include refid="Resident_columns" /> from t_resident
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="userName != null and userName != '' " >and user_name =#{userName,jdbcType=VARCHAR}</if>
+			<if test="realName != null and realName != '' " >and real_name =#{realName,jdbcType=VARCHAR}</if>
+			<if test="password != null and password != '' " >and password =#{password,jdbcType=VARCHAR}</if>
+			<if test="cardId != null and cardId != '' " >and card_id =#{cardId,jdbcType=VARCHAR}</if>
+			<if test="cardType != null  " >and card_type =#{cardType,jdbcType=BIGINT}</if>
+            <if test="sex != null " >and sex =#{sex,jdbcType=INTEGER}</if>
+            <if test="hjdz != null and hjdz != '' " >and hjdz =#{hjdz,jdbcType=VARCHAR}</if>
+            <if test="personType != null  " >and person_type =#{personType,jdbcType=INTEGER}</if>
+            <if test="people != null  " >and people =#{people,jdbcType=BIGINT}</if>
+            <if test="education != null  " >and education =#{education,jdbcType=BIGINT}</if>
+            <if test="political != null  " >and political =#{political,jdbcType=BIGINT}</if>
+            <if test="marriage != null  " >and marriage =#{marriage,jdbcType=BIGINT}</if>
+            <if test="imageId != null  " >and image_id =#{imageId,jdbcType=BIGINT}</if>
+            <if test="status != null  " >and status =#{status,jdbcType=INTEGER}</if>
+            <if test="memberId != null  " >and member_id =#{memberId,jdbcType=VARCHAR}</if>
+			<if test="communityCode != null and communityCode!=''  " >and community_code =#{communityCode,jdbcType=VARCHAR}</if>
+			<if test="mobile != null  " >and mobile =#{mobile,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="ResidentMap" parameterType="String">
+		select <include refid="Resident_columns" /> from t_resident
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="ResidentMap" parameterType="com.bit.sc.module.resident.pojo.Resident">
+		select <include refid="Resident_columns" />
+		from t_resident
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.resident.pojo.Resident" keyProperty="id" useGeneratedKeys="true" keyColumn="id">
+	insert INTO t_resident (
+		user_name ,
+		real_name ,
+		password ,
+		card_id ,
+		card_type,
+		sex ,
+		create_time ,
+		hjdz ,
+		person_type ,
+		people ,
+		education ,
+		political ,
+		marriage ,
+		image_id,
+		status,
+		member_id,
+		community_code,
+		birthday,
+		mobile,
+		org_id
+	) VALUES (
+		#{userName,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{cardId,jdbcType=VARCHAR},
+		#{cardType,jdbcType=BIGINT},
+		#{sex,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{hjdz,jdbcType=VARCHAR},
+		#{personType,jdbcType=INTEGER},
+		#{people,jdbcType=BIGINT},
+		#{education,jdbcType=BIGINT},
+		#{political,jdbcType=BIGINT},
+		#{marriage,jdbcType=BIGINT},
+		#{imageId,jdbcType=BIGINT},
+		#{status,jdbcType=INTEGER},
+		#{memberId,jdbcType=VARCHAR},
+		#{communityCode,jdbcType=VARCHAR},
+		#{birthday,jdbcType=TIMESTAMP},
+		#{mobile,jdbcType=VARCHAR},
+		#{orgId,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.resident.pojo.Resident">
+		update t_resident
+		<set>
+		<if test="userName != null">
+		 user_name =#{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="realName != null">
+		 real_name =#{realName,jdbcType=VARCHAR},
+		</if>
+		<if test="password != null">
+		 password =#{password,jdbcType=VARCHAR},
+		</if>
+		<if test="cardId != null">
+		 card_id =#{cardId,jdbcType=VARCHAR},
+		</if>
+		<if test="cardType != null">
+		 card_type =#{cardType,jdbcType=BIGINT},
+		</if>
+        <if test="sex != null">
+            sex =#{sex,jdbcType=INTEGER},
+        </if>
+        <if test="createTime != null">
+            create_time =#{createTime,jdbcType=TIMESTAMP},
+        </if>
+
+        <if test="hjdz != null">
+            hjdz =#{hjdz,jdbcType=VARCHAR},
+        </if>
+        <if test="personType != null">
+            person_type =#{personType,jdbcType=INTEGER},
+        </if>
+        <if test="people != null">
+            people =#{people,jdbcType=BIGINT},
+        </if>
+        <if test="education != null">
+            education =#{education,jdbcType=BIGINT},
+        </if>
+        <if test="political != null">
+            political =#{political,jdbcType=BIGINT},
+        </if>
+        <if test="marriage != null">
+            marriage =#{marriage,jdbcType=BIGINT},
+        </if>
+        <if test="imageId != null">
+            image_id =#{imageId,jdbcType=BIGINT},
+        </if>
+        <if test="status != null">
+            status =#{status,jdbcType=BIGINT},
+        </if>
+		<if test="communityCode != null">
+			community_code =#{communityCode,jdbcType=VARCHAR},
+		</if>
+		<if test="birthday != null">
+			birthday =#{birthday,jdbcType=TIMESTAMP},
+		</if>
+		<if test="mobile != null">
+			mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+        </set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.resident.pojo.Resident">
+		delete from t_resident 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_resident
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+	<select id="checkPersonalId" parameterType="string" resultType="integer">
+		SELECT COUNT(1) FROM t_resident WHERE card_id = #{gmsfzhm}
+	</select>
+
+	<select id="findBygmsfzhm" parameterType="string" resultMap="ResidentMap">
+		SELECT
+		<include refid="Resident_columns"/>
+		FROM t_resident WHERE card_id = #{gmsfzhm}
+	</select>
+
+	<delete id="deleteByIdAndgmsfzhm" >
+		DELETE FROM t_resident WHERE id = #{id} and card_id = #{gmsfzhm}
+	</delete>
+
+    <select id="queryResidentInfoByPage" parameterType="com.bit.sc.module.resident.vo.ResidentVO" resultType="com.bit.sc.module.resident.vo.ResidentMobileAddressAttachmentVO">
+-- 		,YEAR(CURDATE())-YEAR(t1.birthday) as age
+        SELECT DISTINCT(t1.id),t1.real_name,t1.card_id,t1.hjdz,t1.sex,t1.create_time,t1.`status`,t5.attachment_path FROM t_resident t1
+		INNER JOIN t_resident_rel_address t2
+        on t1.id=t2.resident_id
+		INNER JOIN t_sys_address t3
+		on t2.address_code=t3.address_code
+        INNER JOIN t_attachment t5
+        on t1.image_id = t5.attachment_id
+        <where>
+			<if test="communityCode != null " >and t1.community_code like #{communityCode,jdbcType=VARCHAR}</if>
+            <if test="id != null " >and t1.id =#{id,jdbcType=BIGINT}</if>
+            <if test="realName != null and realName != '' " >and t1.real_name =#{realName,jdbcType=VARCHAR}</if>
+            <if test="cardId != null and cardId != '' " >and t1.card_id =#{cardId,jdbcType=VARCHAR}</if>
+			<if test="cardType != null  " >and t1.card_type =#{cardType,jdbcType=BIGINT}</if>
+            <if test="sex != null " >and t1.sex =#{sex,jdbcType=INTEGER}</if>
+            <if test="hjdz != null and hjdz != '' " >and t1.hjdz like #{hjdz,jdbcType=VARCHAR}</if>
+			<!--<if test="minAge!=null ">and YEAR(CURDATE())-YEAR(t1.birthday) &gt; #{minAge} </if>-->
+			<!--<if test="maxAge!=null ">and YEAR(CURDATE())-YEAR(t1.birthday) &lt; #{maxAge} </if>-->
+			<if test="addressName != null and addressName != '' " >and t3.address_detail like #{addressName,jdbcType=VARCHAR}</if>
+			<if test="status != null  " >and status =#{status,jdbcType=INTEGER}</if>
+        </where>
+    </select>
+
+    <select id="findResidentInfo" parameterType="com.bit.sc.module.resident.vo.ResidentVO" resultType="string">
+        SELECT t2.address_code from t_resident t1
+        LEFT JOIN t_resident_rel_address t2
+        on t1.id = t2.resident_id
+        <where>
+            <if test="id != null " >and t1.id =#{id,jdbcType=BIGINT}</if>
+        </where>
+
+    </select>
+
+	<select id="queryResidentInfoById" parameterType="long" resultType="com.bit.sc.module.resident.vo.ResidentDictVO">
+		SELECT t1.*,t3.attachment_path,t3.file_id FROM t_resident t1
+
+        INNER JOIN t_attachment t3
+        on t1.image_id=t3.attachment_id
+
+		<where>
+            <if test="id != null " >and t1.id =#{id,jdbcType=BIGINT}</if>
+        </where>
+
+	</select>
+
+    <select id="queryResidentAddressInfoById" parameterType="long" resultType="com.bit.sc.module.sys.pojo.ResidentRelAddress">
+        SELECT t4.id,t4.address_code,t4.address_detail FROM
+        t_sys_address t4
+        WHERE t4.address_code in
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+	<select id="findAddressById" resultType="com.bit.sc.module.sys.pojo.Address">
+		SELECT t3.id,t3.address_code,t3.address_detail FROM
+        t_resident t1 INNER JOIN t_resident_rel_address t2
+        on t1.id = t2.resident_id
+        INNER JOIN t_sys_address t3
+        on t2.address_code=t3.address_code
+        <where>
+            <if test="id!=null"> and t1.id = #{id}</if>
+        </where>
+	</select>
+
+    <select id="findAddressCodeById" parameterType="long" resultType="string">
+        SELECT t2.address_code FROM t_resident t1
+        LEFT JOIN t_resident_rel_address t2
+        on t1.id= t2.resident_id
+        <where>
+            and t1.id = #{id}
+        </where>
+    </select>
+
+	<select id="checkResidentInfo" parameterType="com.bit.sc.module.resident.vo.ResidentVO" resultType="integer">
+        SELECT COUNT(1)
+        FROM t_resident
+        <where>
+            <if test="communityCode != null and communityCode !=''" >and community_code = #{communityCode,jdbcType=VARCHAR}</if>
+            <if test="cardId != null and cardId != '' " >and card_id =#{cardId,jdbcType=VARCHAR}</if>
+        </where>
+    </select>
+
+
+</mapper>

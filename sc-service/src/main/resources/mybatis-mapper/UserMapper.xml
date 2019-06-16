@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.user.dao.UserMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="User_columns">
+	    <![CDATA[
+			T1.id as id,
+			T1.username as username,
+			T1.real_name as real_name,
+			T1.mobile as mobile,
+			T1.email as email,
+			T1.password as password,
+		
+			T1.insert_uid as insert_uid,
+			T1.insert_time as insert_time,
+			T1.update_time as update_time,
+			T1.is_del as is_del,
+			T1.is_job as is_job,
+		
+			T1.mcode as mcode,
+			T1.send_time as send_time,
+			T1.version as version
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.user.pojo.User" id="userMap">
+		<id column="id" property="id"/>
+	    <result column="username" property="username"/>
+		<result column="real_name" property="realName"/>
+	    <result column="mobile" property="mobile"/>
+	    <result column="email" property="email"/>
+	    <result column="password" property="password"/>
+	    <result column="insert_uid" property="insertUid"/>
+	    <result column="insert_time" property="insertTime"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="is_del" property="isDel"/>
+	    <result column="is_job" property="isJob"/>
+	    <result column="mcode" property="mcode"/>
+	    <result column="send_time" property="sendTime"/>
+	    <result column="version" property="version"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="userMap" parameterType="com.bit.sc.module.user.vo.UserVO">
+		select <include refid="User_columns" /> from t_sys_manage_user T1
+		<where>
+			<if test="id != null and id !='' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="username != null  and username !=''" >and username =#{username,jdbcType=VARCHAR}</if>
+			<if test="realName != null  and realName !=''" >and real_name =#{realName,jdbcType=VARCHAR}</if>
+			<if test="mobile != null  and mobile !=''" >and mobile =#{mobile,jdbcType=VARCHAR}</if>
+			<if test="email != null  and email !=''" >and email =#{email,jdbcType=VARCHAR}</if>
+			<if test="password != null  and password !=''" >and password =#{password,jdbcType=VARCHAR}</if>
+			<if test="insertUid != null  " >and insert_uid =#{insertUid,jdbcType=INTEGER}</if>
+			<if test="isDel != null " >and is_del =#{isDel,jdbcType=BIT}</if>
+			<if test="isJob != null " >and is_job =#{isJob,jdbcType=BIT}</if>
+			<if test="mcode != null " >and mcode =#{mcode,jdbcType=VARCHAR}</if>
+			<if test="version != null " >and version =#{version,jdbcType=INTEGER}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY T1.${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="userMap" parameterType="com.bit.sc.module.user.pojo.User">
+		select <include refid="User_columns" /> 
+		from t_sys_manage_user T1
+		where
+        	T1.id =#{id,jdbcType=INTEGER}
+
+	</select>
+
+	<select id="findRoleById" resultType="com.bit.sc.module.user.pojo.UserRole" parameterType="com.bit.sc.module.user.vo.UserRoleVO">
+		SELECT
+		T1.username,T3.application_id,T3.role_name,T4.application_name
+		FROM t_sys_manage_user T1 LEFT join t_sys_user_rel_role T2
+		on T1.id = T2.user_id LEFT JOIN  t_sys_role T3
+		on T2.role_id = T3.id LEFT JOIN t_sys_apply T4
+		on T3.application_id = T4.id
+		WHERE T1.id = #{id,jdbcType=BIGINT}
+
+	</select>
+
+	<select id="findByName" resultMap="userMap" parameterType="com.bit.sc.module.user.pojo.User">
+		select <include refid="User_columns" />
+		from t_sys_manage_user T1
+		where
+		T1.id =#{id,jdbcType=INTEGER}
+
+	</select>
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.user.pojo.User">
+	insert INTO t_sys_manage_user (
+		username ,
+		real_name,
+		mobile ,
+		email ,
+		password ,
+		insert_uid ,
+		insert_time ,
+		update_time ,
+		is_del ,
+		is_job ,
+		mcode ,
+		send_time ,
+		version 
+	) VALUES (
+		#{username,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{insertUid,jdbcType=INTEGER},
+		#{insertTime,jdbcType=TIMESTAMP},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{isDel,jdbcType=BIT},
+		#{isJob,jdbcType=BIT},
+		#{mcode,jdbcType=VARCHAR},
+		#{sendTime,jdbcType=TIMESTAMP},
+		#{version,jdbcType=INTEGER}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.user.pojo.User">
+		update t_sys_manage_user
+		<set>
+		<if test="username != null">
+		 username =#{username,jdbcType=VARCHAR},
+		</if>
+		<if test="realName != null">
+			real_name =#{realName,jdbcType=VARCHAR},
+		</if>
+		<if test="mobile != null">
+		 mobile =#{mobile,jdbcType=VARCHAR},
+		</if>
+		<if test="email != null">
+		 email =#{email,jdbcType=VARCHAR},
+		</if>
+		<if test="password != null">
+		 password =#{password,jdbcType=VARCHAR},
+		</if>
+		<if test="insertUid != null">
+		 insert_uid =#{insertUid,jdbcType=INTEGER},
+		</if>
+		<if test="insertTime != null">
+		 insert_time =#{insertTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="isDel != null">
+		 is_del =#{isDel,jdbcType=BIT},
+		</if>
+		<if test="isJob != null">
+		 is_job =#{isJob,jdbcType=BIT},
+		</if>
+		<if test="mcode != null">
+		 mcode =#{mcode,jdbcType=VARCHAR},
+		</if>
+		<if test="sendTime != null">
+		 send_time =#{sendTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="version != null">
+		 version =#{version,jdbcType=INTEGER}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.user.pojo.User">
+		delete from t_sys_manage_user
+		where 
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+
+	<select id="countSameUserName" resultType="int" parameterType="string">
+		SELECT COUNT(1) FROM t_sys_manage_user WHERE username = #{username}
+	</select>
+
+	<select id="searchUser" resultMap="userMap">
+		SELECT
+		<include refid="User_columns"/>
+		FROM t_sys_manage_user T1
+		<where>
+			<if test="username != null and username!=''">
+				and T1.username = #{username}
+			</if>
+			<if test="mobile != null and mobile!=''">
+				and T1.mobile = #{mobile}
+			</if>
+			<if test="insertTimeStart != null and insertTimeStart!=''">
+				and T1.insert_time <![CDATA[>=]]> #{insertTimeStart,jdbcType=DATE}
+			</if>
+			<if test="insertTimeEnd != null and insertTimeEnd!=''">
+				and T1.insert_time <![CDATA[<=]]> #{insertTimeEnd,jdbcType=DATE}
+			</if>
+		</where>
+	</select>
+
+	<!--根据参数查询角色-->
+	<select id="findByParam" resultType="com.bit.sc.module.user.vo.UserVO" parameterType="com.bit.sc.module.user.vo.UserVO">
+		SELECT r.id,r.role_name,r.application_id,r.create_user_id,r.create_time,r.update_user_id,r.update_time,
+		a.id,a.is_delete,a.application_code,a.application_name,a.application_type,a.create_user_id,a.create_time,a.update_user_id,a.update_time
+		FROM t_sys_user_rel_role ur,t_sys_apply a,t_sys_role r
+		<where>
+			and ur.role_id =r.id
+			and r.application_id=a.id
+			and a.is_delete=0
+			and r.is_delete=0
+			<if test="applicationCode != null and applicationCode != '' ">and a.application_code = #{applicationCode,jdbcType=VARCHAR}</if>
+			<if test="userId != null  " >and ur.user_id = #{userId,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+
+	<!--根据用户id查询地址-->
+	<select id="findAddressByUserId" resultType="com.bit.sc.module.sys.pojo.Address" parameterType="com.bit.sc.module.user.vo.UserVO">
+		SELECT a.id,a.address_name,a.address_code,a.address_level,a.fid,a.area_code
+		FROM t_sys_address a
+		LEFT JOIN t_sys_user_rel_address ua ON a.id = ua.address_id
+		<where>
+			<if test="userId != null  " >and ua.user_id = #{userId,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+
+	<!--批量查询地址-->
+	<select id="findAddress" resultType="com.bit.sc.module.sys.pojo.Address">
+		SELECT a.id,a.address_name,a.address_code,a.address_level,a.fid,a.area_code
+		FROM t_sys_address a
+		WHERE 1=1 and id in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 添加系统人员和地址表一条记录 -->
+	<insert id="distributeAddress" parameterType="java.util.List">
+		insert IGNORE INTO t_sys_user_rel_address (
+		id ,
+		address_id,
+		user_id
+		) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.id,jdbcType=BIGINT},
+			#{item.addressId,jdbcType=BIGINT},
+			#{item.userId,jdbcType=BIGINT})
+		</foreach>
+	</insert>
+
+    <!--根据用户（系统人员）id查询地址-->
+    <select id="findAddressIdByUserId" resultType="java.lang.Long">
+        select address_id
+        from t_sys_user_rel_address
+        WHERE user_id =#{userId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 根据用户id删除记录 -->
+    <delete id="deleteByUserId" parameterType="java.lang.Long">
+		delete from t_sys_user_rel_address
+		where
+			user_id =#{userId,jdbcType=BIGINT}
+	</delete>
+
+
+</mapper>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.attachment.dao.AttachmentMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Attachment_columns">
+	    <![CDATA[
+			attachment_id as attachment_id,
+			business_id as business_id,
+			attachment_type as attachment_type,
+			attachment_suffix as attachment_suffix,
+			attachment_name as attachment_name,
+		
+			attachment_path as attachment_path,
+			create_time as create_time,
+			attachment_status as attachment_status,
+			create_user_id as create_user_id,
+			create_username as create_username,
+		
+			data_id as data_id,
+			file_id as file_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.attachment.pojo.Attachment" id="attachmentMap">
+		<id column="attachment_id" property="attachmentId"/>
+	    <result column="business_id" property="businessId"/>
+	    <result column="attachment_type" property="attachmentType"/>
+	    <result column="attachment_suffix" property="attachmentSuffix"/>
+	    <result column="attachment_name" property="attachmentName"/>
+	    <result column="attachment_path" property="attachmentPath"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="attachment_status" property="attachmentStatus"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="create_username" property="createUsername"/>
+	    <result column="data_id" property="dataId"/>
+	    <result column="file_id" property="fileId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="attachmentMap" parameterType="com.bit.sc.module.attachment.vo.AttachmentVO">
+		select <include refid="Attachment_columns" /> from t_attachment
+		<where>
+			<if test="attachmentId != null and attachmentId != '' " >and attachment_id =#{attachmentId,jdbcType=BIGINT}</if>
+			<if test="businessId != null and businessId != '' " >and business_id =#{businessId,jdbcType=INTEGER}</if>
+			<if test="attachmentType != null and attachmentType != '' " >and attachment_type =#{attachmentType,jdbcType=TINYINT}</if>
+			<if test="attachmentSuffix != null and attachmentSuffix != '' " >and attachment_suffix =#{attachmentSuffix,jdbcType=VARCHAR}</if>
+			<if test="attachmentName != null and attachmentName != '' " >and attachment_name =#{attachmentName,jdbcType=VARCHAR}</if>
+			<if test="attachmentPath != null and attachmentPath != '' " >and attachment_path =#{attachmentPath,jdbcType=VARCHAR}</if>
+			<if test="attachmentStatus != null and attachmentStatus != '' " >and attachment_status =#{attachmentStatus,jdbcType=TINYINT}</if>
+			<if test="createUserId != null and createUserId != '' " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="createUsername != null and createUsername != '' " >and create_username =#{createUsername,jdbcType=VARCHAR}</if>
+			<if test="dataId != null and dataId != '' " >and data_id =#{dataId,jdbcType=BIGINT}</if>
+			<if test="fileId != null and fileId != '' " >and file_id =#{fileId,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="attachmentMap" parameterType="String">
+		select <include refid="Attachment_columns" /> from t_attachment
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findByAttachmentId" resultMap="attachmentMap" parameterType="com.bit.sc.module.attachment.pojo.Attachment">
+		select <include refid="Attachment_columns" /> 
+		from t_attachment
+		where 
+        	attachment_id =#{attachmentId,jdbcType=BIGINT}
+
+	</select>
+	<select id="findAllByParams" resultType="com.bit.sc.module.attachment.pojo.Attachment" parameterType="com.bit.sc.module.attachment.pojo.Attachment">
+		select <include refid="Attachment_columns" /> from t_attachment
+		<where>
+			<if test="attachmentId != null and attachmentId != '' " >and attachment_id =#{attachmentId,jdbcType=BIGINT}</if>
+			<if test="businessId != null and businessId != '' " >and business_id =#{businessId,jdbcType=INTEGER}</if>
+			<if test="attachmentType != null and attachmentType != '' " >and attachment_type =#{attachmentType,jdbcType=TINYINT}</if>
+			<if test="attachmentSuffix != null and attachmentSuffix != '' " >and attachment_suffix =#{attachmentSuffix,jdbcType=VARCHAR}</if>
+			<if test="attachmentName != null and attachmentName != '' " >and attachment_name =#{attachmentName,jdbcType=VARCHAR}</if>
+			<if test="attachmentPath != null and attachmentPath != '' " >and attachment_path =#{attachmentPath,jdbcType=VARCHAR}</if>
+			<if test="attachmentStatus != null and attachmentStatus != '' " >and attachment_status =#{attachmentStatus,jdbcType=TINYINT}</if>
+			<if test="createUserId != null and createUserId != '' " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="createUsername != null and createUsername != '' " >and create_username =#{createUsername,jdbcType=VARCHAR}</if>
+			<if test="dataId != null and dataId != '' " >and data_id =#{dataId,jdbcType=BIGINT}</if>
+			<if test="fileId != null and fileId != '' " >and file_id =#{fileId,jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.attachment.pojo.Attachment" keyProperty="attachmentId" useGeneratedKeys="true" keyColumn="attachmentId">
+	insert INTO t_attachment (
+		attachment_id ,
+		business_id ,
+		attachment_type ,
+		attachment_suffix ,
+		attachment_name ,
+		attachment_path ,
+		create_time ,
+		attachment_status ,
+		create_user_id ,
+		create_username ,
+		data_id ,
+		file_id
+	) VALUES (
+		#{attachmentId,jdbcType=BIGINT},
+		#{businessId,jdbcType=INTEGER},
+		#{attachmentType,jdbcType=TINYINT},
+		#{attachmentSuffix,jdbcType=VARCHAR},
+		#{attachmentName,jdbcType=VARCHAR},
+		#{attachmentPath,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{attachmentStatus,jdbcType=TINYINT},
+		#{createUserId,jdbcType=BIGINT},
+		#{createUsername,jdbcType=VARCHAR},
+		#{dataId,jdbcType=BIGINT},
+		#{fileId,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.attachment.pojo.Attachment">
+		update t_attachment
+		<set>
+		<if test="businessId != null">
+		 business_id =#{businessId,jdbcType=INTEGER},
+		</if>
+		<if test="attachmentType != null">
+		 attachment_type =#{attachmentType,jdbcType=TINYINT},
+		</if>
+		<if test="attachmentSuffix != null">
+		 attachment_suffix =#{attachmentSuffix,jdbcType=VARCHAR},
+		</if>
+		<if test="attachmentName != null">
+		 attachment_name =#{attachmentName,jdbcType=VARCHAR},
+		</if>
+		<if test="attachmentPath != null">
+		 attachment_path =#{attachmentPath,jdbcType=VARCHAR},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="attachmentStatus != null">
+		 attachment_status =#{attachmentStatus,jdbcType=TINYINT},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="createUsername != null">
+		 create_username =#{createUsername,jdbcType=VARCHAR},
+		</if>
+		<if test="dataId != null">
+		 data_id =#{dataId,jdbcType=BIGINT},
+		</if>
+		<if test="fileId != null">
+			file_id =#{fileId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 attachment_id = #{attachmentId,jdbcType=BIGINT}
+
+	</update>
+	<update id="updateDataId" parameterType="com.bit.sc.module.attachment.pojo.Attachment">
+		update t_attachment set data_id =#{dataId,jdbcType=BIGINT} where  attachment_id = #{attachmentId,jdbcType=BIGINT}
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.attachment.pojo.Attachment">
+		delete from t_attachment 
+		where
+			attachment_id = #{attachmentId,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_attachment where attachment_id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="batchSelect" resultType="com.bit.sc.module.attachment.pojo.Attachment" parameterType="long">
+		SELECT
+		<include refid="Attachment_columns"/>
+		FROM t_attachment
+		WHERE attachment_id in
+		<foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+</mapper>

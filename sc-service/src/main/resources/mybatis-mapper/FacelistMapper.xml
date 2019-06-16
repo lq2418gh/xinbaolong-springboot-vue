@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.manface.dao.ManfacewhitelistMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Manfacewhitelist_columns">
+	    <![CDATA[
+			id as id,
+			device_id as device_id,
+			resident_id as resident_id,
+			synchro_status as synchro_status,
+		
+			synchro_time as synchro_time,
+			synchro_count as synchro_count,
+			platform_id as platform_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.manface.pojo.Manfacewhitelist" id="manfacewhitelistMap">
+		<id column="id" property="id"/>
+	    <result column="device_id" property="deviceId"/>
+	    <result column="resident_id" property="residentId"/>
+	    <result column="synchro_status" property="synchroStatus"/>
+	    <result column="synchro_time" property="synchroTime"/>
+	    <result column="synchro_count" property="synchroCount"/>
+	    <result column="platform_id" property="platformId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="manfacewhitelistMap" parameterType="com.bit.sc.module.manface.vo.ManfacewhitelistVO">
+		select <include refid="Manfacewhitelist_columns" /> from t_sys_facelist
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="deviceId != null and deviceId != '' " >and device_id =#{deviceId,jdbcType=VARCHAR}</if>
+			<if test="residentId != null  " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+			<if test="synchroStatus != null and synchroStatus != '' " >and synchro_status =#{synchroStatus,jdbcType=INTEGER}</if>
+			<if test="synchroCount != null and synchroCount != '' " >and synchro_count =#{synchroCount,jdbcType=INTEGER}</if>
+			<if test="platformId != null" >and platform_id =#{platformId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="manfacewhitelistMap" parameterType="String">
+		select <include refid="Manfacewhitelist_columns" /> from t_sys_facelist
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="manfacewhitelistMap" parameterType="com.bit.sc.module.manface.pojo.Manfacewhitelist">
+		select <include refid="Manfacewhitelist_columns" /> 
+		from t_sys_facelist
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.manface.pojo.Manfacewhitelist">
+	insert INTO t_sys_facelist (
+		device_id ,
+		resident_id ,
+		synchro_status ,
+		synchro_time ,
+		synchro_count ,
+		platform_id
+	) VALUES (
+		#{deviceId,jdbcType=VARCHAR},
+		#{residentId,jdbcType=BIGINT},
+		#{synchroStatus,jdbcType=INTEGER},
+		#{synchroTime,jdbcType=TIMESTAMP},
+		#{synchroCount,jdbcType=INTEGER},
+		#{platformId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 批量添加记录 -->
+	<insert id="batchAdd" parameterType="list">
+		insert INTO t_sys_facelist (
+			device_id ,
+			resident_id ,
+			synchro_status ,
+			synchro_time ,
+			synchro_count,
+			platform_id
+		) VALUES
+		<foreach collection="manfacewhitelistList" item="item" index="index" separator=",">
+			(
+			#{item.deviceId,jdbcType=VARCHAR},
+			#{item.residentId,jdbcType=BIGINT},
+			#{item.synchroStatus,jdbcType=INTEGER},
+			#{item.synchroTime,jdbcType=TIMESTAMP},
+			#{item.synchroCount,jdbcType=INTEGER},
+			#{item.platformId,jdbcType=BIGINT}
+			)
+		</foreach>
+
+
+	</insert>
+
+
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.manface.pojo.Manfacewhitelist">
+		update t_sys_facelist
+		<set>
+		<if test="deviceId != null">
+		 device_id =#{deviceId,jdbcType=VARCHAR},
+		</if>
+		<if test="residentId != null">
+		resident_id =#{residentId,jdbcType=BIGINT},
+		</if>
+		<if test="synchroStatus != null">
+		 synchro_status =#{synchroStatus,jdbcType=INTEGER},
+		</if>
+		<if test="synchroTime != null">
+		 synchro_time =#{synchroTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="synchroCount != null">
+		 synchro_count =#{synchroCount,jdbcType=INTEGER},
+		</if>
+		<if test="platformId != null">
+		platform_id =#{platformId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.manface.pojo.Manfacewhitelist">
+		delete from t_sys_facelist 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+    <delete id="batchDelete" parameterType="List">
+
+        delete from t_sys_facelist WHERE
+        id in (
+        <foreach collection="ids" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        )
+
+    </delete>
+
+	<select id="queryAllByPage" resultType="com.bit.sc.module.manface.vo.ManfaceResidentEquipmentVO" parameterType="com.bit.sc.module.manface.vo.ManfacewhitelistVO">
+		SELECT
+		t1.id,
+		t1.real_name,
+		t1.card_id,
+		t1.create_time,
+		t2.synchro_status,
+		t2.id as faceid,
+		t2.device_id,
+		t3.attachment_id,
+		t3.attachment_path,
+		t4.address_code,
+		t5.address_detail,
+		t6.equipment_type
+		FROM
+		t_resident t1
+		LEFT JOIN t_sys_facelist t2 ON t1.id = t2.resident_id
+		INNER JOIN t_attachment t3 ON t1.image_id = t3.attachment_id
+		INNER JOIN t_equipment t4 ON t2.device_id = t4.equipment_id
+		INNER JOIN t_sys_address t5 ON t4.address_code = t5.address_code
+		INNER JOIN t_equipment_type t6 on t4.equipment_type=t6.id
+		<where>
+			<if test="addressCode != null and addressCode != '' " >and t5.address_code like #{addressCode,jdbcType=VARCHAR}</if>
+			<if test="realName != null and realName != '' " >and t1.real_name =#{realName,jdbcType=VARCHAR}</if>
+			<if test="cardId != null and cardId != ''  " >and t1.card_id =#{cardId,jdbcType=VARCHAR}</if>
+			<if test="synchroStatus!= null ">and t2.synchro_status = #{synchroStatus,jdbcType=INTEGER} </if>
+			<if test="addressDetail != null and addressDetail != ''  " >and t5.address_detail like #{addressDetail,jdbcType=VARCHAR}</if>
+		</where>
+	</select>
+
+
+	<select id="countList" parameterType="com.bit.sc.module.manface.vo.ManfacewhitelistVO" resultType="integer">
+		SELECT COUNT(0) FROM
+		t_sys_facelist
+		<where>
+			<if test="residentId != null  " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+			<if test="deviceId != null and deviceId != '' " >and device_id =#{deviceId,jdbcType=VARCHAR}</if>
+		</where>
+
+	</select>
+
+	<update id="updateStatusByResidentId" parameterType="long">
+		UPDATE t_sys_facelist
+		<set>
+			synchro_status = 2
+		</set>
+		where resident_id = #{residentId}
+	</update>
+</mapper>

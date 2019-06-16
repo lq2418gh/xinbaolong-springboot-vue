@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.equipment.dao.EquipmentMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Equipment_columns">
+	    <![CDATA[
+			id as id,
+			equipment_id as equipment_id,
+			equipment_mac as equipment_mac,
+			equipment_type as equipment_type,
+		
+			address_code as address_code,
+			create_time as create_time,
+			create_user_id as create_user_id,
+			equipment_status as equipment_status,
+			equipment_online_status as equipment_online_status,
+		
+			remarks as remarks,
+			equipment_model_number_id as equipment_model_number_id,
+			equipment_code as equipment_code,
+			equipment_name as equipment_name
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.equipment.pojo.Equipment" id="equipmentMap">
+		<id column="id" property="id"/>
+	    <result column="equipment_id" property="equipmentId"/>
+	    <result column="equipment_mac" property="equipmentMac"/>
+	    <result column="equipment_type" property="equipmentType"/>
+	    <result column="address_code" property="addressCode"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="equipment_status" property="equipmentStatus"/>
+	    <result column="equipment_online_status" property="equipmentOnlineStatus"/>
+	    <result column="remarks" property="remarks"/>
+	    <result column="equipment_model_number_id" property="equipmentModelNumberId"/>
+	    <result column="equipment_code" property="equipmentCode"/>
+	    <result column="equipment_name" property="equipmentName"/>
+	</resultMap>
+
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.equipment.vo.EquipmentNewVO" id="equipmentVOMap">
+		<id column="id" property="id"/>
+		<result column="equipment_id" property="equipmentId"/>
+		<result column="equipment_mac" property="equipmentMac"/>
+		<result column="equipment_type" property="equipmentType"/>
+		<result column="address_code" property="addressCode"/>
+		<result column="create_time" property="createTime"/>
+		<result column="create_user_id" property="createUserId"/>
+		<result column="equipment_status" property="equipmentStatus"/>
+		<result column="equipment_online_status" property="equipmentOnlineStatus"/>
+		<result column="remarks" property="remarks"/>
+		<result column="equipment_model_number_id" property="equipmentModelNumberId"/>
+		<result column="address_detail" property="addressDetail"/>
+		<result column="equipment_code" property="equipmentCode"/>
+		<result column="equipment_name" property="equipmentName"/>
+	</resultMap>
+
+	<!-- 翻页模糊查询 -->
+	<select id="findAllPage" resultMap="equipmentVOMap" parameterType="Map">
+		select te.*,tsd.address_detail from t_equipment te
+		LEFT JOIN t_sys_address tsd ON te.address_code = tsd.address_code
+		<where>
+			<if test="params.addressCodeList != null and params.addressCodeList.size != 0">
+				and te.address_code in
+				<foreach collection="params.addressCodeList" item="ids" separator="," open="(" close=")">
+					#{ids}
+				</foreach>
+			</if>
+			<if test="params.vo.equipmentType != null">
+				and te.equipment_type = #{params.vo.equipmentType}
+			</if>
+			<if test="params.vo.equipmentCode != null and params.vo.equipmentCode != '' ">
+				and te.equipment_code like #{params.vo.equipmentCode}
+			</if>
+			<if test="params.vo.remarks != null and params.vo.remarks != '' ">
+				and te.remarks like #{params.vo.remarks}
+			</if>
+			<if test="params.vo.equipmentName != null and params.vo.equipmentName != '' ">
+				and te.equipment_name like #{params.vo.equipmentName}
+			</if>
+		</where>
+		<if test="params.vo.orderBy!=null and params.vo.orderBy!=''">
+			ORDER BY ${params.vo.orderBy}
+		</if>
+	</select>
+
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="equipmentMap" parameterType="com.bit.sc.module.equipment.vo.EquipmentVO">
+		select <include refid="Equipment_columns" /> from t_equipment
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="equipmentId != null and equipmentId != '' " >and equipment_id =#{equipmentId,jdbcType=VARCHAR}</if>
+			<if test="equipmentMac != null and equipmentMac != '' " >and equipment_mac =#{equipmentMac,jdbcType=VARCHAR}</if>
+			<if test="equipmentType != null and equipmentType != '' " >and equipment_type =#{equipmentType,jdbcType=TINYINT}</if>
+			<if test="addressCode != null and addressCode != '' " >and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+			<if test="createUserId != null and createUserId != '' " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="equipmentStatus != null and equipmentStatus != '' " >and equipment_status =#{equipmentStatus,jdbcType=TINYINT}</if>
+			<if test="equipmentOnlineStatus != null and equipmentOnlineStatus != '' " >and equipment_online_status =#{equipmentOnlineStatus,jdbcType=TINYINT}</if>
+			<if test="remarks != null and remarks != '' " >and remarks =#{remarks,jdbcType=VARCHAR}</if>
+			<if test="equipmentModelNumberId != null " >and equipment_model_number_id =#{equipmentModelNumberId,jdbcType=BIGINT}</if>
+			<if test="equipmentCode != null and equipmentCode != ''" >and equipment_code =#{equipmentCode,jdbcType=VARCHAR}</if>
+			<if test="equipmentName != null and equipmentName != ''" >and equipment_name =#{equipmentName,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="equipmentMap" parameterType="String">
+		select <include refid="Equipment_columns" /> from t_equipment
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="equipmentMap" parameterType="com.bit.sc.module.equipment.pojo.Equipment">
+		select <include refid="Equipment_columns" /> 
+		from t_equipment
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.equipment.pojo.Equipment" keyProperty="id" useGeneratedKeys="true">
+	insert INTO t_equipment (
+		equipment_id ,
+		equipment_mac ,
+		equipment_type ,
+		address_code ,
+		create_time ,
+		create_user_id ,
+		equipment_status ,
+		equipment_online_status ,
+		remarks ,
+		equipment_model_number_id ,
+		equipment_code,
+		equipment_name
+	) VALUES (
+		#{equipmentId,jdbcType=VARCHAR},
+		#{equipmentMac,jdbcType=VARCHAR},
+		#{equipmentType,jdbcType=TINYINT},
+		#{addressCode,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{equipmentStatus,jdbcType=TINYINT},
+		#{equipmentOnlineStatus,jdbcType=TINYINT},
+		#{remarks,jdbcType=VARCHAR},
+		#{equipmentModelNumberId,jdbcType=BIGINT},
+		#{equipmentCode,jdbcType=VARCHAR},
+		#{equipmentName,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.equipment.pojo.Equipment">
+		update t_equipment
+		<set>
+		<if test="equipmentId != null">
+		 equipment_id =#{equipmentId,jdbcType=VARCHAR},
+		</if>
+		<if test="equipmentMac != null">
+		 equipment_mac =#{equipmentMac,jdbcType=VARCHAR},
+		</if>
+		<if test="equipmentType != null">
+		 equipment_type =#{equipmentType,jdbcType=TINYINT},
+		</if>
+		<if test="addressCode != null">
+		 address_code =#{addressCode,jdbcType=VARCHAR},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="equipmentStatus != null">
+		 equipment_status =#{equipmentStatus,jdbcType=TINYINT},
+		</if>
+		<if test="equipmentOnlineStatus != null">
+		 equipment_online_status =#{equipmentOnlineStatus,jdbcType=TINYINT},
+		</if>
+		<if test="remarks != null">
+		 remarks =#{remarks,jdbcType=VARCHAR},
+		</if>
+		<if test="equipmentModelNumberId != null">
+		 equipment_model_number_id =#{equipmentModelNumberId,jdbcType=BIGINT},
+		</if>
+		<if test="equipmentCode != null">
+			equipment_code =#{equipmentCode,jdbcType=VARCHAR},
+		</if>
+		<if test="equipmentName != null">
+			equipment_name =#{equipmentName,jdbcType=VARCHAR},
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.equipment.pojo.Equipment">
+		delete from t_equipment 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_equipment
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+	<!-- 根据设备码查询 -->
+	<select id="findByEquipmentCode" parameterType="string" resultType="com.bit.sc.module.equipment.pojo.Equipment">
+		select <include refid="Equipment_columns" /> from t_equipment
+		where equipment_code = #{equipmentCode}
+	</select>
+	<!-- 根据deviceId查询对象 -->
+	<select id="findByDeviceId" resultType="com.bit.sc.module.equipment.pojo.Equipment" parameterType="java.lang.String">
+		select <include refid="Equipment_columns" /> from t_equipment
+		where equipment_id = #{deviceId}
+	</select>
+</mapper>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.UserRelPhoneMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="UserRelPhone_columns">
+	    <![CDATA[
+			id as id,
+			user_id as user_id,
+			phone as phone,
+			status as status,
+			registration_id as registration_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.UserRelPhone" id="userRelPhoneMap">
+		<id column="id" property="id"/>
+	    <result column="user_id" property="userId"/>
+	    <result column="phone" property="phone"/>
+	    <result column="status" property="status"/>
+	    <result column="registration_id" property="registrationId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="userRelPhoneMap" parameterType="com.bit.sc.module.sys.vo.UserRelPhoneVO">
+		select <include refid="UserRelPhone_columns" /> from t_sys_user_rel_phone
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="userId != null " >and user_id =#{userId,jdbcType=BIGINT}</if>
+			<if test="phone != null " >and phone =#{phone,jdbcType=BIGINT}</if>
+			<if test="status != null " >and status =#{status,jdbcType=TINYINT}</if>
+			<if test="registrationId != null " >and registration_id =#{registrationId,jdbcType=VARCHAR}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="userRelPhoneMap" parameterType="String">
+		select <include refid="UserRelPhone_columns" /> from t_sys_user_rel_phone
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="userRelPhoneMap" parameterType="com.bit.sc.module.sys.pojo.UserRelPhone">
+		select <include refid="UserRelPhone_columns" /> 
+		from t_sys_user_rel_phone
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.UserRelPhone">
+	insert INTO t_sys_user_rel_phone (
+		user_id ,
+		phone ,
+		status ,
+		registration_id 
+	) VALUES (
+		#{userId,jdbcType=BIGINT},
+		#{phone,jdbcType=BIGINT},
+		#{status,jdbcType=TINYINT},
+		#{registrationId,jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.UserRelPhone">
+		update t_sys_user_rel_phone
+		<set>
+		<if test="user_id != null">
+		 user_id =#{userId,jdbcType=BIGINT},
+		</if>
+		<if test="phone != null">
+		 phone =#{phone,jdbcType=BIGINT},
+		</if>
+		<if test="status != null">
+		 status =#{status,jdbcType=TINYINT},
+		</if>
+		<if test="registration_id != null">
+		 registration_id =#{registrationId,jdbcType=VARCHAR}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.UserRelPhone">
+		delete from t_sys_user_rel_phone 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_user_rel_phone
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+</mapper>

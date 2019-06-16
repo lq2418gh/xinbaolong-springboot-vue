@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.FunctionMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Function_columns">
+	    <![CDATA[
+			id as id,
+			application_id as application_id,
+			function_name as function_name,
+			function_icon as function_icon,
+			function_code as function_code,
+		
+			is_display as is_display,
+			order_value as order_value,
+			create_time as create_time,
+			create_user_id as create_user_id,
+			update_time as update_time,
+		
+			update_user_id as update_user_id
+	    ]]>
+	</sql>
+
+	<sql id="Function_Apply_User_columns">
+	    <![CDATA[
+			sf.id as id,
+			sf.application_id as application_id,
+			sf.function_name as function_name,
+			sf.function_icon as function_icon,
+			sf.function_code as function_code,
+
+			sf.is_display as is_display,
+			sf.order_value as order_value,
+			sf.create_time as create_time,
+			sf.create_user_id as create_user_id,
+			sf.update_time as update_time,
+
+			sf.update_user_id as update_user_id,
+
+			sa.application_name as application_name,
+
+			smu2.real_name as update_user_name,
+			smu.real_name as create_user_name
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.Function" id="functionMap">
+		<id column="id" property="id"/>
+	    <result column="application_id" property="applicationId"/>
+	    <result column="function_name" property="functionName"/>
+	    <result column="function_icon" property="functionIcon"/>
+	    <result column="function_code" property="functionCode"/>
+	    <result column="is_display" property="isDisplay"/>
+	    <result column="order_value" property="orderValue"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+
+		<result column="application_name" property="applicationName"/>
+		<result column="update_user_name" property="updateUserName"/>
+		<result column="create_user_name" property="createUserName"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="functionMap" parameterType="com.bit.sc.module.sys.vo.FunctionVO">
+		select <include refid="Function_Apply_User_columns" /> from t_sys_function as sf
+		left join t_sys_apply as sa on sf.application_id = sa.id
+		left join t_sys_manage_user as smu on sf.create_user_id = smu.id
+		left join t_sys_manage_user as smu2 on sf.update_user_id = smu2.id
+		<where>
+			<if test="id != null  " >and sf.id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationId != null  " >and sf.application_id = #{applicationId,jdbcType=BIGINT}</if>
+			<if test="functionName != null and functionName != '' " >and sf.function_name like "%"#{functionName,jdbcType=VARCHAR}"%"</if>
+			<if test="functionIcon != null and functionIcon !='' " >and sf.function_icon = #{functionIcon,jdbcType=VARCHAR}</if>
+			<if test="functionCode != null and functionCode !='' " >and sf.function_code like "%"#{functionCode,jdbcType=VARCHAR}"%"</if>
+			<if test="isDisplay != null and isDisplay !='' " >and sf.is_display = #{isDisplay,jdbcType=TINYINT}</if>
+			<if test="orderValue != null and orderValue !='' " >and sf.order_value = #{orderValue,jdbcType=TINYINT}</if>
+			<if test="createUserId != null  " >and sf.create_user_id = #{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null  " >and sf.update_user_id = #{updateUserId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="functionMap" parameterType="String">
+		select <include refid="Function_columns" /> from t_sys_function
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="functionMap" parameterType="com.bit.sc.module.sys.pojo.Function">
+		select <include refid="Function_columns" /> 
+		from t_sys_function
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+	<!-- 查询统计 -->
+    <select id="findCountByFunctionCode" resultType="java.lang.Integer">
+		select count(1) from t_sys_function
+		<where>
+			1=1
+			<if test="_parameter != null and _parameter !=''  ">
+				and function_code =#{_parameter}
+			</if>
+		</where>
+	</select>
+
+    <!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.Function">
+	insert INTO t_sys_function (
+		application_id ,
+		function_name ,
+		function_icon ,
+		function_code ,
+		is_display ,
+		order_value ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		update_user_id 
+	) VALUES (
+		#{applicationId,jdbcType=BIGINT},
+		#{functionName,jdbcType=VARCHAR},
+		#{functionIcon,jdbcType=VARCHAR},
+		#{functionCode,jdbcType=VARCHAR},
+		#{isDisplay,jdbcType=TINYINT},
+		#{orderValue,jdbcType=TINYINT},
+		#{createTime,jdbcType=DATE},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=DATE},
+		#{updateUserId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.Function">
+		update t_sys_function
+		<set>
+		<if test="applicationId != null">
+			application_id =#{applicationId,jdbcType=BIGINT},
+		</if>
+		<if test="functionName != null and functionName != ''">
+		 function_name =#{functionName,jdbcType=VARCHAR},
+		</if>
+		<if test="functionIcon != null and functionIcon != ''">
+		 function_icon =#{functionIcon,jdbcType=VARCHAR},
+		</if>
+		<if test="functionCode != null and functionCode !=''">
+		 function_code =#{functionCode,jdbcType=VARCHAR},
+		</if>
+		<if test="isDisplay != null">
+		 is_display =#{isDisplay,jdbcType=TINYINT},
+		</if>
+		<if test="orderValue != null">
+		 order_value =#{orderValue,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=DATE},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=DATE},
+		</if>
+		<if test="updateUserId != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.Function">
+		delete from t_sys_function 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_sys_function where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

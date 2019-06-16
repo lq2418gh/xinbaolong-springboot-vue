@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.group.dao.GroupRelMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="GroupRel_columns">
+		<![CDATA[
+			id as id,
+			group_id as group_id,
+			rel_id as rel_id,
+			type as type
+	    ]]>
+	</sql>
+	<sql id="GroupRel_group_columns">
+		<![CDATA[
+			gr.id as id,
+			gr.group_id as group_id,
+			gr.rel_id as rel_id,
+			gr.type as type,
+			g.name as group_name
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.group.pojo.GroupRel" id="groupRelMap">
+		<id column="id" property="id"/>
+		<result column="group_id" property="groupId"/>
+		<result column="rel_id" property="relId"/>
+		<result column="type" property="type"/>
+		<result column="group_name" property="groupName"/>
+	</resultMap>
+	<!-- 翻页查询后台处理type下面的分页是sql处理2中方法  -->
+	<select id="findListPage" resultType="com.bit.sc.module.group.pojo.GroupRel">
+		select <include refid="GroupRel_group_columns" />
+		from t_group_rel gr
+		left join t_group g on gr.group_id= g.id
+		<where>
+			<if test="id != null " >and gr.id =#{id,jdbcType=BIGINT}</if>
+			<if test="groupId != null  " >and gr.group_id =#{groupId,jdbcType=BIGINT}</if>
+			<if test="relId != null" >and gr.rel_id =#{relId,jdbcType=BIGINT}</if>
+			<if test="type != null  " >and gr.type =#{type,jdbcType=TINYINT}</if>
+			<if test="groupName != null and groupName != '' " >and gr.group_name like "%"#{groupName,jdbcType=VARCHAR}"%"</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+			ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+			${order}
+		</if>
+	</select>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="groupRelMap" parameterType="com.bit.sc.module.group.vo.GroupRelVO">
+		select gg.* from (    SELECT (CASE t.type when 0 then r.real_name when 1 then e.equipment_name END ) as relName,
+									t.group_id as groupId,
+									t.type as type,
+									t.rel_id as relID,
+									g.name as groupName
+									FROM t_group_rel t LEFT JOIN t_resident r on t.rel_id=r.id
+									LEFT JOIN t_group g on t.group_id=g.id
+									LEFT JOIN t_equipment e on t.rel_id = e.id) gg
+			<where>
+				<if test="id != null " > gg.id =#{id,jdbcType=BIGINT}</if>
+				<if test="groupId != null" >and gg.group_id =#{groupId,jdbcType=BIGINT}</if>
+				<if test="relId != null" >and gg.relId =#{relId,jdbcType=BIGINT}</if>
+				<if test="type != null  " >and gg.type =#{type,jdbcType=TINYINT}</if>
+				<if test="groupName != null and groupName != '' " >and gg.groupName like "%"#{groupName,jdbcType=TINYINT}"%"</if>
+				<if test="relName != null and relName != '' " >and gg.relName like "%"#{relName,jdbcType=TINYINT}"%"</if>
+			</where>
+			<if test="orderBy!=null and orderBy!=''">
+				ORDER BY ${orderBy}
+			</if>
+			<if test="order!=null and order!=''">
+				${order}
+			</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="groupRelMap" parameterType="String">
+		select <include refid="GroupRel_columns" /> from t_group_rel
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="groupRelMap" parameterType="com.bit.sc.module.group.pojo.GroupRel">
+		select <include refid="GroupRel_columns" />
+		from t_group_rel
+		where id =#{id,jdbcType=BIGINT}
+	</select>
+	<!-- 根据groupid查询grouprel表 -->
+	<select id="findGroupRelList" resultType="com.bit.sc.module.group.pojo.GroupRel">
+		select <include refid="GroupRel_group_columns" />
+		from t_group_rel gr  left join t_group g on gr.group_id= g.id
+		where gr.id =#{id,jdbcType=BIGINT}
+	</select>
+	<!-- 根据参数查询list -->
+	<select id="findByParam" resultType="com.bit.sc.module.group.pojo.GroupRel">
+		select <include refid="GroupRel_columns" />
+		from t_group_rel
+		<where>
+			<if test="id != null " > id =#{id,jdbcType=BIGINT}</if>
+			<if test="groupId != null  " >and group_id =#{groupId,jdbcType=BIGINT}</if>
+			<if test="relId != null " >and rel_id =#{relId,jdbcType=BIGINT}</if>
+			<if test="type != null " >and type =#{type,jdbcType=TINYINT}</if>
+		</where>
+	</select>
+	<!-- 居民 -->
+	<select id="findPageResByParam" resultType="com.bit.sc.module.group.pojo.GroupResEqu">
+			select
+			r.id as id,
+			r.real_name as realName,
+			r.card_id as cardId,
+			r.card_type as cardType,
+			r.sex as sex,
+			r.hjdz as hjdz,
+			r.birthday as birthday,
+			a.attachment_path as attachmentPath
+			from t_group_rel gr LEFT JOIN t_resident r on gr.rel_id=r.id
+			LEFT JOIN t_attachment a on r.image_id = a.attachment_id
+			<where>
+				<if test="groupId != null" >and gr.group_id =#{groupId,jdbcType=BIGINT}</if>
+				<if test="type != null " >and gr.type =#{type,jdbcType=TINYINT}</if>
+				<if test="cardId != null " >and r.card_id like "%"#{cardId,jdbcType=VARCHAR}"%"</if>
+				<if test="realName != null " >and r.real_name like "%"#{realName,jdbcType=VARCHAR}"%"</if>
+				<if test="hjdz != null " >and r.hjdz like "%"#{hjdz,jdbcType=VARCHAR}"%"</if>
+			</where>
+	</select>
+	<!-- 设备 -->
+	<select id="findPageEquByParam" resultType="com.bit.sc.module.group.pojo.GroupResEqu">
+			select   e.equipment_code as equipmentCode,
+			e.id as deviceId,
+			temn.equipment_model_number AS equipmentModelNumber,
+			e.remarks as remarks,
+			a.address_detail as addressDetail
+			from t_group_rel gr LEFT JOIN t_equipment e on gr.rel_id = e.id
+			left join t_sys_address a on e.address_code = a.address_code
+			LEFT JOIN t_equipment_model_number temn ON temn.id = e.equipment_model_number_id
+			<where>
+				<if test="groupId != null" >and gr.group_id =#{groupId,jdbcType=BIGINT}</if>
+				<if test="type != null " >and gr.type =#{type,jdbcType=TINYINT}</if>
+				<if test="equipmentCode != null " >and e.equipment_code like "%"#{equipmentCode,jdbcType=VARCHAR}"%"</if>
+				<if test="equipmentModelNumber != null " >and e.equipment_model_number like "%"#{equipmentModelNumber,jdbcType=VARCHAR}"%"</if>
+				<if test="addressDetail != null " >and a.address_detail like "%"#{addressDetail,jdbcType=VARCHAR}"%"</if>
+			</where>
+	</select>
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.group.pojo.GroupRel">
+		insert INTO t_group_rel (
+		group_id ,
+		rel_id ,
+		type
+		) VALUES (
+		#{groupId,jdbcType=BIGINT},
+		#{relId,jdbcType=BIGINT},
+		#{type,jdbcType=TINYINT}
+		)
+	</insert>
+	<!-- 批量保存 -->
+	<insert id="batchAdd"  parameterType="java.util.List">
+		insert INTO t_group_rel (
+		group_id ,
+		rel_id ,
+		type
+		) VALUES
+		<foreach collection="list" index="index" item="item" separator=",">
+			(#{item.groupId,jdbcType=BIGINT},
+			#{item.relId,jdbcType=BIGINT},
+			#{item.type,jdbcType=TINYINT}
+			)
+		</foreach>
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.group.pojo.GroupRel">
+		update t_group_rel
+		<set>
+			<if test="groupId != null">
+				group_id =#{groupId,jdbcType=BIGINT},
+			</if>
+			<if test="relId != null">
+				rel_id =#{relId,jdbcType=BIGINT},
+			</if>
+			<if test="type != null">
+				type =#{type,jdbcType=TINYINT}
+			</if>
+		</set>
+		where   id = #{id,jdbcType=BIGINT}
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.group.pojo.GroupRel">
+		delete from t_group_rel
+		where
+		id = #{id,jdbcType=BIGINT}
+
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_group_rel where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id,jdbcType=BIGINT}
+		</foreach>
+	</delete>
+	<!-- 根据参数  删除 -->
+	<delete id="delByParam" parameterType="java.util.List">
+		delete  from t_group_rel
+		<where>
+			<foreach collection="list" item="item" index="index" separator="or">
+				(
+				<if test="item.relId != null">
+					rel_id =#{item.relId,jdbcType=BIGINT}
+				</if>
+				<if test="item.relId != null and item.type != null" >
+					and
+				</if>
+				<if test="item.type != null">
+					type =#{item.type,jdbcType=TINYINT}
+				</if>
+				<if test="(item.type != null and item.groupId!=null) or (item.relId != null and  item.groupId!=null)">
+					and
+				</if>
+				<if test=" item.groupId!=null">
+					group_id =#{item.groupId,jdbcType=BIGINT}
+				</if>
+				)
+			</foreach>
+		</where>
+	</delete>
+
+	<!--根据groupId，relId，type查询-->
+	<select id="findByIdAndType" parameterType="com.bit.sc.module.group.pojo.GroupRel" resultType="com.bit.sc.module.group.pojo.GroupRel">
+		select <include refid="GroupRel_columns" /> from t_group_rel
+		<where>
+			<if test="groupId != null" >and group_id =#{groupId,jdbcType=BIGINT}</if>
+			<if test="relId != null" >and rel_id =#{relId,jdbcType=BIGINT}</if>
+			<if test="type != null " >and type =#{type,jdbcType=TINYINT}</if>
+		</where>
+	</select>
+</mapper>

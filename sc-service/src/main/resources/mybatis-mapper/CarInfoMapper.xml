@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bit.sc.module.car.dao.CarInfoMapper">
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="CarInfo_columns">
+
+        <![CDATA[
+
+        id as id,
+        car_id as car_id,
+        car_number as car_number,
+        car_type as car_type,
+        resident_id as resident_id,
+        create_time as create_time,
+        create_user_id as create_user_id,
+        update_time as update_time,
+        update_user_id as update_user_id,
+        car_brand as car_brand,
+        car_colour as car_colour,
+        car_passengers as car_passengers,
+        car_flapper as car_flapper,
+        car_power as car_power,
+        car_engine as car_engine,
+        car_bigframe as car_bigframe,
+        image_id as image_id
+
+        ]]>
+    </sql>
+
+    <!-- 字段与属性映射 -->
+    <resultMap id="carInfoMap" type="com.bit.sc.module.car.pojo.CarInfo">
+        <id column="id" property="id"/>
+        <result column="car_id" property="carId"/>
+        <result column="car_number" property="carNumber"/>
+        <result column="car_type" property="carType"/>
+        <result column="resident_id" property="residentId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user_id" property="createUserId"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_user_id" property="updateUserId"/>
+        <result column="car_brand" property="carBrand"/>
+        <result column="car_colour" property="carColour"/>
+        <result column="car_passengers" property="carPassengers"/>
+        <result column="car_flapper" property="carFlapper"/>
+        <result column="car_power" property="carPower"/>
+        <result column="car_engine" property="carEngine"/>
+        <result column="car_bigframe" property="carBigframe"/>
+        <result column="image_id" property="imageId"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="CarInfo_Resident_columns">
+        <![CDATA[
+
+        c.id as id,
+        r.real_name as real_name,
+        r.card_id as card_id,
+        r.hjdz as hjdz,
+
+        c.car_number as car_number,
+        c.create_time as create_time,
+        c.image_id as image_id,
+
+        att.attachment_name as attachment_name,
+		att.attachment_path as attachment_path
+
+        ]]>
+    </sql>
+
+    <!-- 字段与属性映射 -->
+    <resultMap id="carInfoResidentMap" type="com.bit.sc.module.car.pojo.CarInfoResident">
+        <id column="id" property="id"/>
+        <result column="real_name" property="realName"/>
+        <result column="card_id" property="cardId"/>
+        <result column="hjdz" property="hjdz"/>
+
+        <result column="car_number" property="carNumber"/>
+        <result column="create_time" property="createTime"/>
+        <result column="image_id" property="imageId"/>
+
+        <result column="attachment_name" property="attachmentName"/>
+        <result column="attachment_path" property="attachmentPath"/>
+    </resultMap>
+
+    <!-- 车辆信息分页查询列表 -->
+    <select id="findCarInfoResidentListPage" resultMap="carInfoResidentMap" parameterType="com.bit.sc.module.car.vo.CarInfoVO">
+        select
+        <include refid="CarInfo_Resident_columns"/>
+        from t_carinfo c,t_resident r,t_attachment att
+        <where>
+            and c.resident_id = r.id
+            and c.image_id = att.attachment_id
+            <if test="communityCode !=null and communityCode !=''">and r.community_code like #{communityCode,jdbcType=VARCHAR}"%"</if>
+            <if test="id !=null">and id =#{id,jdbcType=BIGINT}</if>
+            <if test="realName !=null and realName !=''">and real_name =#{realName,jdbcType=VARCHAR}</if>
+            <if test="cardId !=null and cardId !=''">and card_id =#{cardId,jdbcType=VARCHAR}</if>
+            <if test="hjdz !=null and hjdz !=''">and hjdz =#{hjdz,jdbcType=VARCHAR}</if>
+            <if test="carNumber !=null and carNumber !=''">and car_number=#{carNumber,jdbcType=VARCHAR}</if>
+            <if test="imageId !=null">and image_id=#{imageId,jdbcType=BIGINT}</if>
+
+        </where>
+        <if test="orderBy!=null and orderBy!=''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test="order!=null and order!=''">
+            ${order}
+        </if>
+    </select>
+
+    <!-- 根据条件查询 -->
+    <select id="findByConditionPage" resultMap="carInfoMap" parameterType="com.bit.sc.module.car.pojo.CarInfo">
+        select
+        <include refid="CarInfo_columns"/>
+        from t_carinfo
+        <where>
+            <if test="id !=null">and id =#{id,jdbcType=BIGINT}</if>
+            <if test="carId !=null and carId !=''">and car_id =#{carId,jdbcType=VARCHAR}</if>
+            <if test="carNumber !=null and carNumber !=''">and car_number=#{carNumber,jdbcType=VARCHAR}</if>
+            <if test="carType !=null">and car_type =#{carType,jdbcType=TINYINT}</if>
+            <if test="residentId !=null">and resident_id =#{residentId,jdbcType=BIGINT}</if>
+            <if test="carNumber !=null and carNumber !=''">and car_number=#{carNumber,jdbcType=VARCHAR}</if>
+            <if test="carEngine !=null and carEngine !=''">and car_engine=#{carEngine,jdbcType=VARCHAR}</if>
+            <if test="carBigframe !=null and carBigframe !=''">and car_bigframe=#{carBigframe,jdbcType=VARCHAR}</if>
+        </where>
+    </select>
+
+    <!--查询单条记录-->
+    <select id="findById" resultMap="carInfoMap" parameterType="com.bit.sc.module.car.pojo.CarInfo">
+        select
+        <include refid="CarInfo_columns"/>
+        from t_carinfo
+        <where>
+            <if test="id !=null">and id =#{id,jdbcType=BIGINT}</if>
+        </where>
+    </select>
+
+    <!--添加一条记录-->
+    <insert id="add" parameterType="com.bit.sc.module.car.pojo.CarInfo">
+        insert into t_carinfo(
+        car_id,
+        car_number,
+        car_type,
+        resident_id,
+        create_time,
+        create_user_id,
+        car_brand,
+        car_colour,
+        car_passengers,
+        car_flapper,
+        car_power,
+        car_engine,
+        car_bigframe,
+        image_id
+        ) VALUES (
+        #{carId,jdbcType=VARCHAR},
+        #{carNumber,jdbcType=VARCHAR},
+        #{carType,jdbcType=TINYINT},
+        #{residentId,jdbcType=BIGINT},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createUserId,jdbcType=BIGINT},
+        #{carBrand,jdbcType=VARCHAR},
+        #{carColour,jdbcType=VARCHAR},
+        #{carPassengers,jdbcType=INTEGER},
+        #{carFlapper,jdbcType=INTEGER},
+        #{carPower,jdbcType=INTEGER},
+        #{carEngine,jdbcType=VARCHAR},
+        #{carBigframe,jdbcType=VARCHAR},
+        #{imageId,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <!--修改一条记录-->
+    <update id="update" parameterType="com.bit.sc.module.car.pojo.CarInfo">
+        update t_carinfo
+        <set>
+            <if test="carId !=null and carId !=''">
+                car_id =#{carId,jdbcType=VARCHAR},
+            </if>
+            <if test="carNumber !=null and carNumber !=''">
+                car_number=#{carNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="carType !=null">
+                car_type =#{carType,jdbcType=TINYINT},
+            </if>
+            <if test="residentId !=null">
+                resident_id =#{residentId,jdbcType=BIGINT},
+            </if>
+            <if test="updateTime !=null">
+                update_time =#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateUserId !=null">
+                update_user_id =#{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="carBrand !=null and carBrand !=''">
+                car_brand = #{carBrand,jdbcType=VARCHAR},
+            </if>
+            <if test="carColour !=null and carColour !=''">
+                car_colour =#{carColour,jdbcType=VARCHAR},
+            </if>
+            <if test="carPassengers !=null">
+                car_passengers =#{carPassengers,jdbcType=INTEGER},
+            </if>
+            <if test="carFlapper !=null">
+                car_flapper =#{carFlapper,jdbcType=INTEGER},
+            </if>
+            <if test="carPower !=null">
+                car_power =#{carPower,jdbcType=INTEGER},
+            </if>
+            <if test="carEngine !=null and carEngine !=''">
+                car_engine =#{carEngine,jdbcType=VARCHAR},
+            </if>
+            <if test="carBigframe !=null and carBigframe !=''">
+                car_bigframe =#{carBigframe,jdbcType=VARCHAR},
+            </if>
+            <if test="imageId !=null">
+                image_id =#{imageId,jdbcType=BIGINT}
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.ApplyMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Apply_columns">
+	    <![CDATA[
+			id as id,
+			application_code as application_code,
+			application_name as application_name,
+			application_type as application_type,
+			create_time as create_time,
+		
+			create_user_id as create_user_id,
+			update_time as update_time,
+			update_user_id as update_user_id,
+			is_delete as is_delete
+
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.Apply" id="applyMap">
+		<id column="id" property="id"/>
+	    <result column="application_code" property="applicationCode"/>
+	    <result column="application_name" property="applicationName"/>
+	    <result column="application_type" property="applicationType"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+		<result column="is_delete" property="isDelete"/>
+
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="applyMap" parameterType="com.bit.sc.module.sys.vo.ApplyVO">
+		select <include refid="Apply_columns" /> from t_sys_apply
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationCode != null " >and application_code =#{applicationCode,jdbcType=VARCHAR}</if>
+			<if test="applicationName != null " >and application_name =#{applicationName,jdbcType=VARCHAR}</if>
+			<if test="applicationType != null " >and application_type =#{applicationType,jdbcType=TINYINT}</if>
+			<if test="createUserId != null " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null " >and update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+			<if test="isDelete != null " >and is_delete =#{isDelete,jdbcType=TINYINT}</if>
+
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="applyMap" parameterType="String">
+		select <include refid="Apply_columns" /> from t_sys_apply
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="applyMap" parameterType="com.bit.sc.module.sys.pojo.Apply">
+		select <include refid="Apply_columns" /> 
+		from t_sys_apply
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+	<select id="findByParm" resultMap="applyMap" parameterType="com.bit.sc.module.sys.vo.ApplyVO">
+		select <include refid="Apply_columns" /> from t_sys_apply
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="applicationCode != null " >and application_code =#{applicationCode,jdbcType=VARCHAR}</if>
+			<if test="applicationName != null " >and application_name =#{applicationName,jdbcType=VARCHAR}</if>
+			<if test="applicationType != null " >and application_type =#{applicationType,jdbcType=TINYINT}</if>
+			<if test="createUserId != null " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null " >and update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+			<if test="isDelete != null " >and is_delete =#{isDelete,jdbcType=TINYINT}</if>
+		</where>
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.Apply">
+	insert INTO t_sys_apply (
+		application_code ,
+		application_name ,
+		application_type ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		is_delete,
+		update_user_id 
+	) VALUES (
+		#{applicationCode,jdbcType=VARCHAR},
+		#{applicationName,jdbcType=VARCHAR},
+		#{applicationType,jdbcType=TINYINT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{isDelete,jdbcType=TINYINT},
+		#{updateUserId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.Apply">
+		update t_sys_apply
+		<set>
+		<if test="applicationCode != null">
+			application_code =#{applicationCode,jdbcType=VARCHAR},
+		</if>
+		<if test="applicationName != null">
+			application_name =#{applicationName,jdbcType=VARCHAR},
+		</if>
+		<if test="applicationType != null">
+			application_type =#{applicationType,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="updateTime != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="isDelete != null">
+		 is_delete =#{isDelete,jdbcType=TINYINT},
+		</if>
+		<if test="updateUserId != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.Apply">
+		delete from t_sys_apply 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from  t_sys_apply
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+
+	<select id="getNoneResident" resultMap="applyMap">
+		SELECT
+		<include refid="Apply_columns"/>
+		FROM t_sys_apply
+		WHERE id !=3
+	</select>
+</mapper>

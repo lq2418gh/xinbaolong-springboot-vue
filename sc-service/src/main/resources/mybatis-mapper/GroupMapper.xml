@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.group.dao.GroupMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="Group_columns">
+	    <![CDATA[
+			id as id,
+			name as name,
+			address_code as address_code,
+			group_code as group_code,
+			day_begintime as day_begintime,
+		
+			day_endtime as day_endtime,
+			weekdays as weekdays,
+			remarks as remarks,
+			group_type as group_type,
+			status as status,
+			create_time as create_time
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.group.pojo.Group" id="groupMap">
+		<id column="id" property="id"/>
+	    <result column="name" property="name"/>
+	    <result column="address_code" property="addressCode"/>
+	    <result column="group_code" property="groupCode"/>
+	    <result column="day_begintime" property="dayBegintime"/>
+	    <result column="day_endtime" property="dayEndtime"/>
+	    <result column="weekdays" property="weekdays"/>
+	    <result column="remarks" property="remarks"/>
+	    <result column="group_type" property="groupType"/>
+	    <result column="status" property="status"/>
+	    <result column="create_time" property="createTime"/>
+	</resultMap>
+
+	<!--  -->
+	<resultMap type="com.bit.sc.module.group.vo.GroupNewVO" id="newGroupMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="address_code" property="addressCode"/>
+		<result column="group_code" property="groupCode"/>
+		<result column="day_begintime" property="dayBegintime"/>
+		<result column="day_endtime" property="dayEndtime"/>
+		<result column="weekdays" property="weekdays"/>
+		<result column="remarks" property="remarks"/>
+		<result column="group_type" property="groupType"/>
+		<result column="status" property="status"/>
+		<result column="create_time" property="createTime"/>
+		<result column="address_detail" property="addressDetail"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="groupMap" parameterType="com.bit.sc.module.group.vo.GroupVO">
+		select <include refid="Group_columns" /> from t_group
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="name != null and name != '' " >and name =#{name,jdbcType=VARCHAR}</if>
+			<if test="addressCode != null and addressCode != '' " >and address_code =#{addressCode,jdbcType=VARCHAR}</if>
+			<if test="groupCode != null and groupCode != '' " >and group_code =#{groupCode,jdbcType=VARCHAR}</if>
+			<if test="weekdays != null and weekdays != '' " >and weekdays =#{weekdays,jdbcType=VARCHAR}</if>
+			<if test="remarks != null and remarks != '' " >and remarks =#{remarks,jdbcType=VARCHAR}</if>
+			<if test="groupType != null and groupType != '' " >and group_type =#{groupType,jdbcType=TINYINT}</if>
+			<if test="status != null and status != '' " >and status =#{status,jdbcType=TINYINT}</if>
+			<if test="createTime != null and createTime != '' " >and create_time =#{createTime,jdbcType=TIMESTAMP}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="groupMap" parameterType="String">
+		select <include refid="Group_columns" /> from t_group
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="groupMap" parameterType="com.bit.sc.module.group.pojo.Group">
+		select <include refid="Group_columns" /> 
+		from t_group
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.group.pojo.Group">
+	insert INTO t_group (
+		name ,
+		address_code ,
+		group_code ,
+		day_begintime ,
+		day_endtime ,
+		weekdays ,
+		remarks ,
+		group_type ,
+		status ,
+		create_time
+	) VALUES (
+		#{name,jdbcType=VARCHAR},
+		#{addressCode,jdbcType=VARCHAR},
+		#{groupCode,jdbcType=VARCHAR},
+		#{dayBegintime,jdbcType=VARCHAR},
+		#{dayEndtime,jdbcType=VARCHAR},
+		#{weekdays,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},
+		#{groupType,jdbcType=TINYINT},
+		#{status,jdbcType=TINYINT},
+		#{createTime,jdbcType=TIMESTAMP}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.group.pojo.Group">
+		update t_group
+		<set>
+		<if test="name != null">
+		 name =#{name,jdbcType=VARCHAR},
+		</if>
+		<if test="addressCode != null">
+		 address_code =#{addressCode,jdbcType=VARCHAR},
+		</if>
+		<if test="groupCode != null">
+		 group_code =#{groupCode,jdbcType=VARCHAR},
+		</if>
+		<if test="dayBegintime != null">
+		 day_begintime =#{dayBegintime,jdbcType=VARCHAR},
+		</if>
+		<if test="dayEndtime != null">
+		 day_endtime =#{dayEndtime,jdbcType=VARCHAR},
+		</if>
+		<if test="weekdays != null">
+		 weekdays =#{weekdays,jdbcType=VARCHAR},
+		</if>
+		<if test="remarks != null">
+		 remarks =#{remarks,jdbcType=VARCHAR},
+		</if>
+		<if test="groupType != null">
+		 group_type =#{groupType,jdbcType=TINYINT},
+		</if>
+		<if test="status != null">
+		 status =#{status,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.group.pojo.Group">
+		delete from t_group 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+
+	<!-- 翻页模糊查询 -->
+	<select id="findAllPage" resultMap="newGroupMap" parameterType="Map">
+		select tg.*,tsd.address_detail from t_group tg
+		LEFT JOIN t_sys_address tsd ON tg.address_code = tsd.address_code
+		<where>
+			<if test="params.addressCodeList != null and params.addressCodeList.size != 0">
+				and tg.address_code in
+				<foreach collection="params.addressCodeList" item="ids" separator="," open="(" close=")">
+					#{ids}
+				</foreach>
+			</if>
+			<if test="params.vo.name != null">
+				and tg.name like #{params.vo.name}
+			</if>
+			<if test="params.vo.remarks != null and params.vo.remarks != '' ">
+				and tg.remarks like #{params.vo.remarks}
+			</if>
+			<if test="params.vo.groupType != null and params.vo.groupType != '' ">
+				and tg.group_type like #{params.vo.groupType}
+			</if>
+			<if test="params.addressCode != null and params.addressCode != ''">
+				and tg.address_code like #{params.addressCode}
+
+			</if>
+		</where>
+		<if test="params.vo.orderBy!=null and params.vo.orderBy!=''">
+			ORDER BY ${params.vo.orderBy}
+		</if>
+	</select>
+
+	<!-- 查询所有已启用的分组 -->
+	<select id="findAllByStatus" resultMap="groupMap">
+		select <include refid="Group_columns" /> from t_group
+		where status = 1
+	</select>
+
+	<select id="findAllByParam" resultMap="groupMap" parameterType="com.bit.sc.module.group.pojo.Group">
+		SELECT
+		<include refid="Group_columns"/>
+		FROM t_group
+		<where>
+            <if test="addressCode != null">and address_code like #{addressCode}</if>
+			<if test="groupCode != null">and group_code = #{groupCode}</if>
+            <if test="name != null">and name like #{name}</if>
+		</where>
+	</select>
+</mapper>

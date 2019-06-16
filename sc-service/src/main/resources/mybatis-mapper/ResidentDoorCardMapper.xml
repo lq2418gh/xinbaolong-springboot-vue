@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.resident.dao.ResidentDoorCardMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ResidentDoorCard_columns">
+	    <![CDATA[
+			id as id,
+			card_num as card_num,
+			card_type as card_type,
+			create_time as create_time,
+			create_user_id as create_user_id,
+		
+			create_user_name as create_user_name,
+			resident_id as resident_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.resident.pojo.ResidentDoorCard" id="residentDoorCardMap">
+		<id column="id" property="id"/>
+	    <result column="card_num" property="cardNum"/>
+	    <result column="card_type" property="cardType"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="create_user_name" property="createUserName"/>
+	    <result column="resident_id" property="residentId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="residentDoorCardMap" parameterType="com.bit.sc.module.resident.vo.ResidentDoorCardVO">
+		select <include refid="ResidentDoorCard_columns" /> from t_resident_door_card
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="cardNum != null and cardNum != '' " >and card_num =#{cardNum,jdbcType=VARCHAR}</if>
+			<if test="cardType != null and cardType != '' " >and card_type =#{cardType,jdbcType=TINYINT}</if>
+			<if test="createUserId != null and createUserId != '' " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="createUserName != null and createUserName != '' " >and create_user_name =#{createUserName,jdbcType=VARCHAR}</if>
+			<if test="residentId != null and residentId != '' " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="residentDoorCardMap" parameterType="String">
+		select <include refid="ResidentDoorCard_columns" /> from t_resident_door_card
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="residentDoorCardMap" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+		select <include refid="ResidentDoorCard_columns" /> 
+		from t_resident_door_card
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+	insert INTO t_resident_door_card (
+		card_num ,
+		card_type ,
+		create_time ,
+		create_user_id ,
+		create_user_name ,
+		resident_id 
+	) VALUES (
+		#{cardNum,jdbcType=VARCHAR},
+		#{cardType,jdbcType=TINYINT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{createUserName,jdbcType=VARCHAR},
+		#{residentId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+		update t_resident_door_card
+		<set>
+		<if test="cardNum != null">
+		 card_num =#{cardNum,jdbcType=VARCHAR},
+		</if>
+		<if test="cardType != null">
+		 card_type =#{cardType,jdbcType=TINYINT},
+		</if>
+		<if test="createTime != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="createUserId != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="createUserName != null">
+		 create_user_name =#{createUserName,jdbcType=VARCHAR},
+		</if>
+		<if test="residentId != null">
+		 resident_id =#{residentId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+		delete from t_resident_door_card 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_resident_door_card
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+
+	<!-- 根据卡号查询是否有重复 -->
+	<select id="findByCardNum" resultType="com.bit.sc.module.resident.pojo.ResidentDoorCard" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+		SELECT
+		<include refid="ResidentDoorCard_columns" />
+		FROM
+			t_resident_door_card
+		WHERE
+			card_num = #{cardNum}
+	</select>
+
+	<select id="findByParam" resultType="com.bit.sc.module.resident.pojo.ResidentDoorCard" parameterType="com.bit.sc.module.resident.pojo.ResidentDoorCard">
+		SELECT
+		<include refid="ResidentDoorCard_columns" />
+		FROM
+		t_resident_door_card
+		<where>
+			<if test="id != null and id != '' " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="cardNum != null and cardNum != '' " >and card_num =#{cardNum,jdbcType=VARCHAR}</if>
+			<if test="cardType != null and cardType != '' " >and card_type =#{cardType,jdbcType=TINYINT}</if>
+			<if test="createUserId != null and createUserId != '' " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="createUserName != null and createUserName != '' " >and create_user_name =#{createUserName,jdbcType=VARCHAR}</if>
+			<if test="residentId != null and residentId != '' " >and resident_id =#{residentId,jdbcType=BIGINT}</if>
+		</where>
+	</select>
+</mapper>

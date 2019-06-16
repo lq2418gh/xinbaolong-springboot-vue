@@ -1,0 +1,11 @@
+/target/
+/bin/
+/.project
+/.classpath
+/.settings/
+/.checkstyle
+/test-output/
+/.idea
+*/target/*
+*.iml
+src/test/java/com/bit/sc/manage/service/ResidentSericeTest\.java

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.ManageUserMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="ManageUser_columns">
+	    <![CDATA[
+			id as id,
+			user_name as user_name,
+			real_name as real_name,
+			nick_name as nick_name,
+			password as password,
+		
+			email as email,
+			phone as phone,
+			status as status,
+			create_time as create_time,
+			create_user_id as create_user_id,
+		
+			update_time as update_time,
+			update_user_id as update_user_id
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.ManageUser" id="manageUserMap">
+		<id column="id" property="id"/>
+	    <result column="user_name" property="userName"/>
+	    <result column="real_name" property="realName"/>
+	    <result column="nick_name" property="nickName"/>
+	    <result column="password" property="password"/>
+	    <result column="email" property="email"/>
+	    <result column="phone" property="phone"/>
+	    <result column="status" property="status"/>
+	    <result column="create_time" property="createTime"/>
+	    <result column="create_user_id" property="createUserId"/>
+	    <result column="update_time" property="updateTime"/>
+	    <result column="update_user_id" property="updateUserId"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="manageUserMap" parameterType="com.bit.sc.module.sys.vo.ManageUserVO">
+		select <include refid="ManageUser_columns" /> from t_sys_manage_user
+		<where>
+			<if test="id != null " >and id =#{id,jdbcType=BIGINT}</if>
+			<if test="userName != null " >and user_name =#{userName,jdbcType=VARCHAR}</if>
+			<if test="realName != null " >and real_name =#{realName,jdbcType=VARCHAR}</if>
+			<if test="nickName != null " >and nick_name =#{nickName,jdbcType=VARCHAR}</if>
+			<if test="password != null " >and password =#{password,jdbcType=VARCHAR}</if>
+			<if test="email != null " >and email =#{email,jdbcType=VARCHAR}</if>
+			<if test="phone != null " >and phone =#{phone,jdbcType=VARCHAR}</if>
+			<if test="status != null " >and status =#{status,jdbcType=TINYINT}</if>
+			<if test="createUserId != null " >and create_user_id =#{createUserId,jdbcType=BIGINT}</if>
+			<if test="updateUserId != null " >and update_user_id =#{updateUserId,jdbcType=BIGINT}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+		ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+		${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="manageUserMap" parameterType="String">
+		select <include refid="ManageUser_columns" /> from t_sys_manage_user
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findById" resultMap="manageUserMap" parameterType="com.bit.sc.module.sys.pojo.ManageUser">
+		select <include refid="ManageUser_columns" /> 
+		from t_sys_manage_user
+		where 
+        	id =#{id,jdbcType=BIGINT}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.ManageUser">
+	insert INTO t_sys_manage_user (
+		user_name ,
+		real_name ,
+		nick_name ,
+		password ,
+		email ,
+		phone ,
+		status ,
+		create_time ,
+		create_user_id ,
+		update_time ,
+		update_user_id 
+	) VALUES (
+		#{userName,jdbcType=VARCHAR},
+		#{realName,jdbcType=VARCHAR},
+		#{nickName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},
+		#{status,jdbcType=TINYINT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=BIGINT},
+		#{updateTime,jdbcType=TIMESTAMP},
+		#{updateUserId,jdbcType=BIGINT}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.ManageUser">
+		update t_sys_manage_user
+		<set>
+		<if test="user_name != null">
+		 user_name =#{userName,jdbcType=VARCHAR},
+		</if>
+		<if test="real_name != null">
+		 real_name =#{realName,jdbcType=VARCHAR},
+		</if>
+		<if test="nick_name != null">
+		 nick_name =#{nickName,jdbcType=VARCHAR},
+		</if>
+		<if test="password != null">
+		 password =#{password,jdbcType=VARCHAR},
+		</if>
+		<if test="email != null">
+		 email =#{email,jdbcType=VARCHAR},
+		</if>
+		<if test="phone != null">
+		 phone =#{phone,jdbcType=VARCHAR},
+		</if>
+		<if test="status != null">
+		 status =#{status,jdbcType=TINYINT},
+		</if>
+		<if test="create_time != null">
+		 create_time =#{createTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="create_user_id != null">
+		 create_user_id =#{createUserId,jdbcType=BIGINT},
+		</if>
+		<if test="update_time != null">
+		 update_time =#{updateTime,jdbcType=TIMESTAMP},
+		</if>
+		<if test="update_user_id != null">
+		 update_user_id =#{updateUserId,jdbcType=BIGINT}
+		</if>
+		</set>
+		where 
+			 id = #{id,jdbcType=BIGINT}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.ManageUser">
+		delete from t_sys_manage_user 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+		<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">
+		<foreach item="item" index="index" collection="list" open="begin" close=";end;" separator =";">
+			delete from t_sys_manage_user
+			id in (
+			<foreach collection="ids" item="id" separator=",">
+				#{id}
+			</foreach>
+			)
+		</foreach>
+	</delete>
+</mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.sys.dao.AreaCodeMapper">
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="AreaCode_columns">
+	    <![CDATA[
+			ar_code as ar_code,
+			ar_name as ar_name,
+			ar_type as ar_type,
+			parent_code as parent_code,
+			ar_leavel as ar_leavel
+	    ]]>
+	</sql>
+	<!-- 字段与属性映射 -->
+	<resultMap type="com.bit.sc.module.sys.pojo.AreaCode" id="areaCodeMap">
+		<id column="ar_code" property="arCode"/>
+		<result column="ar_name" property="arName"/>
+		<result column="ar_type" property="arType"/>
+		<result column="parent_code" property="parentCode"/>
+		<result column="ar_leavel" property="arLeavel"/>
+	</resultMap>
+	<!-- 翻页查询 -->
+	<select id="findByConditionPage" resultMap="areaCodeMap" parameterType="com.bit.sc.module.sys.vo.AreaCodeVO">
+		select <include refid="AreaCode_columns" /> from t_area_code
+		<where>
+			<if test="arCode != null and arCode != '' " >and ar_code like "%"#{arCode,jdbcType=VARCHAR}"%"</if>
+			<if test="arName != null and arName != '' " >and ar_name like "%"#{arName,jdbcType=VARCHAR}"%"</if>
+			<if test="arType != null and arType != '' " >and ar_type =#{arType,jdbcType=VARCHAR}</if>
+			<if test="parentCode != null and parentCode != '' " >and parent_code like "%"#{parentCode,jdbcType=VARCHAR}"%"</if>
+			<if test="arLeavel != null  " >and ar_leavel =#{arLeavel,jdbcType=INTEGER}</if>
+		</where>
+		<if test="orderBy!=null and orderBy!=''">
+			ORDER BY ${orderBy}
+		</if>
+		<if test="order!=null and order!=''">
+			${order}
+		</if>
+	</select>
+	<!-- 查询全部 -->
+	<select id="findAll" resultMap="areaCodeMap" parameterType="String">
+		select <include refid="AreaCode_columns" /> from t_area_code
+		<if test="sorter!=null and sorter!=''">
+			ORDER BY ${sorter}
+		</if>
+	</select>
+	<!-- 查询单条记录 -->
+	<select id="findByArCode" resultMap="areaCodeMap" parameterType="com.bit.sc.module.sys.pojo.AreaCode">
+		select ar_name as addressName , <include refid="AreaCode_columns" />
+		from t_area_code
+		where
+		ar_code =#{arCode,jdbcType=VARCHAR}
+
+	</select>
+	<!-- 根据父code查询list -->
+	 <select id="findByParentCode"  resultMap="areaCodeMap" parameterType="java.lang.String">
+		select  ar_name as addressName ,<include refid="AreaCode_columns" /> from t_area_code WHERE parent_code=#{parentCode,jdbcType=VARCHAR}
+	</select>
+	<select id="findParentByArCode" resultType="com.bit.sc.module.sys.pojo.AreaCode">
+		select <include refid="AreaCode_columns" /> from t_area_code WHERE parent_code=#{arCode,jdbcType=VARCHAR}
+
+	</select>
+
+	<!-- 添加一条记录 -->
+	<insert id="add" parameterType="com.bit.sc.module.sys.pojo.AreaCode">
+	insert INTO t_area_code (
+		ar_code ,
+		ar_name ,
+		ar_type ,
+		parent_code ,
+		ar_leavel
+	) VALUES (
+		#{arCode,jdbcType=VARCHAR},
+		#{arName,jdbcType=VARCHAR},
+		#{arType,jdbcType=VARCHAR},
+		#{parentCode,jdbcType=VARCHAR},
+		#{arLeavel,jdbcType=INTEGER}
+	)
+	</insert>
+	<!-- 修改一条记录 -->
+	<update id="update" parameterType="com.bit.sc.module.sys.pojo.AreaCode">
+		update t_area_code
+		<set>
+			<if test="arName != null and arName != ''">
+				ar_name =#{arName,jdbcType=VARCHAR},
+			</if>
+			<if test="arType != null and arType !='' ">
+				ar_type =#{arType,jdbcType=VARCHAR},
+			</if>
+			<if test="parentCode != null and parentCode !=''">
+				parent_code =#{parentCode,jdbcType=VARCHAR},
+			</if>
+			<if test="arLeavel != null">
+				ar_leavel =#{arLeavel,jdbcType=INTEGER}
+			</if>
+		</set>
+		where
+		ar_code = #{arCode,jdbcType=VARCHAR}
+
+	</update>
+	<!-- 删除一条记录 -->
+	<delete id="delete" parameterType="com.bit.sc.module.sys.pojo.AreaCode">
+		delete from t_area_code
+		where
+			ar_code = #{arCode,jdbcType=VARCHAR}
+
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="java.util.List">
+		delete from t_area_code where id in
+		<foreach collection="ids" open="(" close=")" item="id" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

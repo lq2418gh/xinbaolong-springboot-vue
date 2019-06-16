@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bit.sc.module.news.dao.AddressRelAnnouncementMapper">
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="AddressRelAnnouncement_columns">
+	    <![CDATA[
+
+			id as id,
+			address_id as address_id,
+			announcement_id as announcement_id
+
+        ]]>
+	</sql>
+    <!-- 字段与属性映射 -->
+    <resultMap type="com.bit.sc.module.news.pojo.AddressRelAnnouncement" id="addressRelAnnouncementMap">
+        <id column="id" property="id"/>
+        <result column="address_id" property="addressId"/>
+        <result column="announcement_id" property="announcementId"/>
+    </resultMap>
+    <!-- 翻页查询 -->
+    <select id="findByConditionPage" resultMap="addressRelAnnouncementMap"
+            parameterType="com.bit.sc.module.news.vo.AddressRelAnnouncementVO">
+        select
+        <include refid="AddressRelAnnouncement_columns"/>
+        from t_sys_address_rel_announcement
+        <where>
+            <if test="id != null  ">and id =#{id,jdbcType=BIGINT}</if>
+            <if test="addressId != null  ">and address_id =#{addressId,jdbcType=BIGINT}</if>
+            <if test="announcementId != null  ">and announcement_id
+                =#{announcementId,jdbcType=BIGINT}
+            </if>
+        </where>
+        <if test="orderBy!=null and orderBy!=''">
+            ORDER BY ${orderBy}
+        </if>
+        <if test="order!=null and order!=''">
+            ${order}
+        </if>
+    </select>
+    <!-- 查询全部 -->
+    <select id="findAll" resultMap="addressRelAnnouncementMap" parameterType="String">
+        select
+        <include refid="AddressRelAnnouncement_columns"/>
+        from t_sys_address_rel_announcement
+        <if test="sorter!=null and sorter!=''">
+            ORDER BY ${sorter}
+        </if>
+    </select>
+    <!-- 查询单条记录 -->
+    <select id="findById" resultMap="addressRelAnnouncementMap"
+            parameterType="com.bit.sc.module.news.pojo.AddressRelAnnouncement">
+        select
+        <include refid="AddressRelAnnouncement_columns"/>
+        from t_sys_address_rel_announcement
+        where
+        id =#{id,jdbcType=BIGINT}
+
+    </select>
+
+    <!-- 添加一条记录 -->
+    <insert id="add" parameterType="com.bit.sc.module.news.pojo.AddressRelAnnouncement">
+	insert INTO t_sys_address_rel_announcement (
+		address_id ,
+		announcement_id
+	) VALUES (
+		#{addressId,jdbcType=BIGINT},
+		#{announcementId,jdbcType=BIGINT}
+	)
+	</insert>
+
+    <insert id="batchAdd" parameterType="list">
+        insert INTO t_sys_address_rel_announcement (
+        address_id ,
+        announcement_id
+	    ) VALUES
+	    <foreach collection="addressRelAnnouncementList" item="item" index="index" separator=",">
+            (
+            #{item.addressId,jdbcType=BIGINT},
+            #{item.announcementId,jdbcType=BIGINT}
+            )
+        </foreach>
+
+
+    </insert>
+
+
+    <!-- 修改一条记录 -->
+    <update id="update" parameterType="com.bit.sc.module.news.pojo.AddressRelAnnouncement">
+        update t_sys_address_rel_announcement
+        <set>
+            <if test="addressId != null">
+                address_id =#{addressId,jdbcType=BIGINT},
+            </if>
+            <if test="announcementId != null">
+                announcement_id =#{announcementId,jdbcType=BIGINT}
+            </if>
+        </set>
+        where
+        id = #{id,jdbcType=BIGINT}
+
+    </update>
+    <!-- 删除一条记录 -->
+    <delete id="delete" parameterType="com.bit.sc.module.news.pojo.AddressRelAnnouncement">
+		delete from t_sys_address_rel_announcement 
+		where
+			id = #{id,jdbcType=BIGINT}
+
+	</delete>
+    <!-- 批量删除 -->
+    <delete id="batchDelete" parameterType="List">
+
+        delete from t_sys_address_rel_announcement
+        id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </delete>
+
+    <select id="queryAddressNewsByConditionPage" parameterType="com.bit.sc.module.news.vo.AddressRelAnnouncementVO" resultType="com.bit.sc.module.news.vo.AddressAnnouncementVO">
+        SELECT t1.id,
+        t1.address_id,
+        t1.announcement_id,
+        t2.address_name,
+        t3.title FROM t_sys_address_rel_announcement t1
+        LEFT JOIN t_sys_address t2
+        on t1.addressId = t2.id
+        INNER JOIN t_sys_announcement t3
+        on t1.announcementId=t3.id
+        <where>
+            <if test="addressId != null  ">and t1.address_id =#{addressId,jdbcType=BIGINT}</if>
+            <if test="isPublish != null  ">and t3.is_publish =#{isPublish,jdbcType=BIGINT}</if>
+            <if test="isDelete != null  ">and t3.is_delete =#{isDelete,jdbcType=BIGINT}</if>
+            <if test="isBanner != null  ">and t3.is_banner =#{isBanner,jdbcType=BIGINT}</if>
+        </where>
+        <if test="orderBy!=null and orderBy!=''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <delete id="deleteRelation" parameterType="com.bit.sc.module.news.vo.AddressRelAnnouncementVO">
+        delete from t_sys_address_rel_announcement
+        <where>
+            <if test="announcementId !=null">
+                and announcement_id = #{announcementId}
+            </if>
+            <if test="addressId !=null">
+                and address_id = #{addressId}
+            </if>
+        </where>
+    </delete>
+
+
+</mapper>

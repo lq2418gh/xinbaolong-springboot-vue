@@ -1,0 +1,18 @@
+jsms.appkey: 75c6cec2deb8e53cc951461e
+jsms.masterSecret: f8d97be44661fa7ff5156bf0
+jsms.phone: 17710099352
+jsms.temp_id: 1
+file.localtion: D:/fileUpload/
+
+
+
+#极光推送所需appkey和masterSecret
+#jpush.appkey: fec61a4b61f2dd5f93fab8c3
+jpush.appkey: e6b531a2406a92ae9d29247d
+#jpush.masterSecret: 00af5c95e262a0df2af40f34
+jpush.masterSecret: 77ba7e97e8e90c62cec058ec
+
+
+#上传文件类型
+file.pic: jpg,png,bmp,gif,jpeg
+file.file: doc,docx,xls,xlsx,pdf,ppt,pptx,txt
