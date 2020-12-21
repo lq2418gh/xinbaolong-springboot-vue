@@ -114,6 +114,7 @@
       <artifactId>jsms-client</artifactId>
       <version>1.2.1</version>
     </dependency>
+    <!--啊实打实-->
     <dependency>
       <groupId>cn.jpush.api</groupId>
       <artifactId>jiguang-common</artifactId>
